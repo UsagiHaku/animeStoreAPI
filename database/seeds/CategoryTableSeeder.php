@@ -1,10 +1,10 @@
 <?php
 
-use App\Package;
+use App\Category;
 use App\Serie;
 use Illuminate\Database\Seeder;
 
-class PackagesTableSeeder extends Seeder
+class CategoryTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,12 +13,10 @@ class PackagesTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(Package::class,2)->create();
-        foreach(Package::all() as $package) {
-            $package->series()
+        factory(Category::class,10)->create();
+        foreach(Category::all() as $category) {
+            $category->series()
                 ->attach(Serie::all()->random(1)->first());
         }
     }
-
-
 }

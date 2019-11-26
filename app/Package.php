@@ -9,6 +9,10 @@ class Package extends Model
     protected $fillable = ['id','title','description','image','price'];
 
     public function series(){
-        return $this->belongsToMany('App\Serie')->withTimestamps();
+        return $this->belongsToMany('App\Serie');
+    }
+
+    public function orderItems(){
+        return $this->hasMany('App\OrderItem');
     }
 }

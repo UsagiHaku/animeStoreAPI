@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Package;
 use App\Product;
+use App\Serie;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -30,14 +31,13 @@ class PackageTest extends TestCase
         $package = factory(Package::class)->create();
 
         $response = $this->json('GET','/api/v1/packages/' . $package->id);
-        $response ->assertStatus(200)
+        $response->assertStatus(200)
             ->assertJsonFragment([
                   'title'=> $package->title,
                   'description'=> $package->description,
                   'image'=>$package->image,
                   'price'=>strval($package->price)
-            ])
-        ;
+            ]);
     }
 
     public function test_show_with_uncreated_package()
@@ -45,6 +45,20 @@ class PackageTest extends TestCase
         factory(Package::class)->create();
         $response = $this->json('GET','/api/v1/packages/2');
         $response->assertStatus(404);
+    }
+
+    public function test_list_series_of_one_package(){
+        factory(Serie::class,20)->create();
+
+        factory(Package::class)
+        ->create()
+        ->each(function ($package) {
+            $package->series()->attach(Serie::all()->random(1)->first());
+        });
+
+        $response = $this->json('GET','/api/v1/packages/' . Package::all()->first()->id);
+
+        $response->assertJsonCount(1, "series");
     }
 
 }

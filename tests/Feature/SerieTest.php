@@ -23,4 +23,7 @@ class SerieTest extends TestCase
             ->assertStatus(200)
             ->assertJsonCount(3);
     }
+
+
+
 }
