@@ -16,6 +16,10 @@ class Serie extends Model
         return $this->belongsToMany('App\Category');
     }
 
+    public function comments(){
+        return $this->hasMany('App\Comment');
+    }
+
     public function users(){
         return $this->belongsToMany('App\User');
     }

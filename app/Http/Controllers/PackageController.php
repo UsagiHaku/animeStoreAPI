@@ -17,7 +17,7 @@ class PackageController extends Controller
      */
     public function index()
     {
-        return response()->json(Package::all());
+        return response()->json(Package::with('series')->get());
     }
 
     /**
@@ -39,7 +39,7 @@ class PackageController extends Controller
      */
     public function show($id)
     {
-        $package = Package::find($id);
+        $package = Package::with('series')->find($id);
         if(!$package){
             abort(404);
         }

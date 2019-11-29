@@ -14,7 +14,7 @@ class SerieController extends Controller
      */
     public function index()
     {
-        return response()->json(Serie::all());
+        return response()->json(Serie::with('packages', 'categories')->get());
     }
 
     /**
@@ -36,7 +36,11 @@ class SerieController extends Controller
      */
     public function show($id)
     {
-        //
+        $serie = Serie::with('packages', 'categories', 'comments', 'comments.user')->find($id);
+        if(!$serie){
+            abort(404);
+        }
+        return response()->json($serie);
     }
 
     /**
