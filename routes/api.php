@@ -26,3 +26,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::apiResource('users/:id/orders','OrderController');
 });
 
+Route::post('v1/login','LoginController@login');
+Route::post('v1/signup','Auth\\RegisterController@store');
+Route::get('v1/users','UserController@show')->name('users.show');
+
