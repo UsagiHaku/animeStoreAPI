@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
@@ -15,30 +14,16 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
-        if (Auth::check()) {
-            return [
-                'data' => [
-                    'type' => 'Users',
-                    'attributes' => [
-                        'name' => $this->name,
-                        'email' => $this->email,
-                    ],
-                    'links' => [
-                        'self' => route('users.show')
-                    ]
+        return [
+            'data' => [
+                'type' => 'Users',
+                'attributes' => [
+                    'name' => $this->name,
+                    'email' => $this->email,
+                    'api_token' => $this->api_token
                 ]
-            ];
-        } else {
-            return [
-                'data' => [
-                    'type' => 'Users',
-                    'attributes' => [
-                        'name' => $this->name,
-                        'email' => $this->email,
-                    ]
-                ]
-            ];
-        }
+            ]
+        ];
     }
 
 }
