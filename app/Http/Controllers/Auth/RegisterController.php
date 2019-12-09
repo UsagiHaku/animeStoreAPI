@@ -7,6 +7,7 @@ use App\Http\Resources\UserResource;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
@@ -65,17 +66,14 @@ class RegisterController extends Controller
      */
     protected function store(CreateUserRequest $request)
     {
-        /*$user = User::create([
+        $user = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password,
-            'password-confirm' => $request->password-confirm
-        ]);
+            'api_token' => Str::random(60)
+        ];
 
-        $user = User::create($request->all());
-        return response()->json($user,201);
-        */
-        $user = new UserResource(User::create($request->all()));
-        return $user;
+        $resource = new UserResource(User::create($user));
+        return $resource;
     }
 }
