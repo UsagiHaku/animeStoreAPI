@@ -83,31 +83,35 @@ class PackageController extends Controller
     public function update(Request $request, $id)
     {
         $package = Package::with('series')->find($id);
-        if(!$package){
-            abort(404);
-        }
-        $package->fill($request->all())->save();
-
         $series = $request->get('series');
 
-        if($series == null || empty($series)){
-            abort(400);
+        if(!$package || $series == null || empty($series)){
+            response()->json(null,404);
         }
 
-        $packageSeries = $package->series()->get();
+        foreach ($series as $serie){
+            if(!(array_key_exists("id", $serie) &&
+                Serie::find($serie["id"]))
+            ){
+                response()->json(null, 404);
+            }
+        }
 
+        $package->fill($request->all())->save();
+        $packageSeries = $package->series()->get();
         //checo en busca de series que no estén en el paquete y las añado
         $addSerie = true;
         foreach($series as $serie){
-            if(array_key_exists("id", $serie) && Serie::find($serie["id"])){
-                foreach ($packageSeries as $packageSerie){
-                   if($serie["id"] == $packageSerie["id"]){
-                       $addSerie = false;
-                       break;
-                   }
 
-               }
-            }
+            foreach ($packageSeries as $packageSerie){
+                $serieTemp = new Serie($serie);
+                if($serieTemp->id ==
+                    $packageSerie->id) {
+                    $addSerie = false;
+                }
+           }
+
+            print($serie["name"]);
             if($addSerie == true){
                 $newSerie = Serie::find($serie["id"]);
                 $newSerie->save();
@@ -135,8 +139,9 @@ class PackageController extends Controller
             }
             $removeSerie = true;
         }
+        $package->save();
 
-        return response()->json($package, 201);
+        return response()->json($package, 200);
     }
 
     /**
@@ -150,10 +155,9 @@ class PackageController extends Controller
             abort(404);
         }
 
-        $packageDestroyed = Package::destroy($id);
-        if(!$packageDestroyed) {
-            abort(404);
-        }
+        $package->series()->detach();
+        Package::destroy($id);
+
         return response(null, 204);
     }
 

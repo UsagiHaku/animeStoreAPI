@@ -108,47 +108,89 @@ class PackageTest extends TestCase
             ]);
     }
 
-    //public function test_update_a_package_will_returns_the_updated_package() {
-    //            $package = factory(Package::class)->create();
-    //            $response = $this->put('/api/v1/packages/'. $package->id, [
-    //                'title' => 'El señor de los anillos',
-    //                'description' => 'La mejor saga fantastica'
-    //            ]);
-    //            $response
-    //                ->assertStatus(200)
-    //                ->assertJsonFragment([
-    //                    'name' => 'El señor de los anillos',
-    //                    'description' => 'La mejor saga fantastica',
-    //                ])
-    //                ->assertJsonCount(6);
-    //    }
 
-    public function test_add_series_in_a_created_package(){
-        $package = factory(Package::class)->create();
-        $series = factory(Serie::class, 3)
+
+    public function test_update_a_package_will_returns_the_updated_package() {
+        $this->withoutExceptionHandling();
+
+       $package = factory(Package::class)->create();
+        factory(Serie::class,2)
             ->create()
             ->each(function ($serie) {
                 $serie->packages()->attach(Package::all()->first());
             });
 
-        $response = $this->post('/api/v1/packages/'. $package->id . '/series' ,[
-            "series" => [
-                [
-                    'name' => 'El señor de los anillos 1',
-                    'description' => 'Primera entrega de la saga fantastica',
-                    'image' => 'https://i.ebayimg.com/images/g/RZwAAOSwLtxcp6WK/s-l1600.jpg'
-                ]
-            ]
-        ]);
 
-        $response->assertStatus(200)
-            ->assertJsonFragment([
-                [
-                    'name' => 'El señor de los anillos 1',
-                    'description' => 'Primera entrega de la saga fantastica',
-                    'image' => 'https://i.ebayimg.com/images/g/RZwAAOSwLtxcp6WK/s-l1600.jpg'
-                ]
-            ]);
+       $newSerie = factory(Serie::class)->create();
+
+       $response = $this->put('/api/v1/packages/'. $package->id, [
+           'title' => $package->title . 'nombre actualizado',
+           'description' => $package->description . 'new',
+           'image' => $package->image ,
+           'price' => $package->price ,
+           'series'=>[
+               [
+                   'id'=> $newSerie->id,
+                   'name' => $newSerie->name,
+                   'description' => $newSerie->description,
+                   'image' => $newSerie->image
+               ]
+           ]
+       ]);
+
+       $response
+        ->assertStatus(200)
+        ->assertJsonFragment([
+            'title' => $package->title . 'nombre actualizado',
+            'description' => $package->description . 'new'
+        ]);
     }
 
+    //falla
+
+    public function test_update_a_package_adding_a_uncreated_serie() {
+        $this->withoutExceptionHandling();
+
+        $package = factory(Package::class)->create();
+        factory(Serie::class,2)
+            ->create([
+                "name" => "holis"
+            ])
+            ->each(function ($serie) {
+                $serie->packages()->attach(Package::all()->first());
+            });
+
+
+        $newSerie = factory(Serie::class)->create();
+
+        $response = $this->put('/api/v1/packages/'. $package->id, [
+            'title' => $package->title . 'nombre actualizado',
+            'description' => $package->description . 'new',
+            'image' => $package->image ,
+            'price' => $package->price,
+            'series'=>[
+                [
+                    'name' => $newSerie->name,
+                    'description' => $newSerie->description,
+                    'image' => $newSerie->image
+                ]
+            ]
+
+        ]);
+
+        $response->assertStatus(404);
+
+    }
+
+    public function test_destroy_a_package(){
+        $package = factory(Package::class)->create();
+
+        $serie = factory(Serie::class)->create();
+        $package->series()->attach($serie);
+
+        $response = $this->delete('/api/v1/packages/'. $package->id);
+
+        $response->assertStatus(204);
+        $this->assertDatabaseMissing("packages", ["id" => $package->id]);
+    }
 }
