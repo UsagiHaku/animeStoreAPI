@@ -24,9 +24,10 @@ Route::get('v1/users','UserController@show')->name('users.show');
 Route::group(['prefix' => 'v1'], function () {
     Route::apiResource('series', 'SerieController');
     Route::apiResource('packages','PackageController');
-    Route::apiResource('packages/:id/series','PackageController');
-    //Route::apiResource('series/comments','CommentController');
-    //Route::apiResource('comments','CommentController');
+    Route::put('packages/{id}/series','PackageController@addSeries');
+    Route::delete('packages/{id}/series','PackageController@removeSeries');
+    Route::apiResource('series/comments','CommentController');
+    Route::apiResource('comments','CommentController');
     Route::apiResource('users/:id/orders','OrderController');
 });
 

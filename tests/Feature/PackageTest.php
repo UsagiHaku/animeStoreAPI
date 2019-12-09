@@ -108,47 +108,103 @@ class PackageTest extends TestCase
             ]);
     }
 
-    //public function test_update_a_package_will_returns_the_updated_package() {
-    //            $package = factory(Package::class)->create();
-    //            $response = $this->put('/api/v1/packages/'. $package->id, [
-    //                'title' => 'El señor de los anillos',
-    //                'description' => 'La mejor saga fantastica'
-    //            ]);
-    //            $response
-    //                ->assertStatus(200)
-    //                ->assertJsonFragment([
-    //                    'name' => 'El señor de los anillos',
-    //                    'description' => 'La mejor saga fantastica',
-    //                ])
-    //                ->assertJsonCount(6);
-    //    }
 
-    public function test_add_series_in_a_created_package(){
+
+    public function test_update_a_package_will_returns_the_updated_package_without_update_series() {
+        //$this->withoutExceptionHandling();
+       $package = factory(Package::class)->create();
+
+       $response = $this->put('/api/v1/packages/'. $package->id, [
+           'title' => $package->title . 'nombre actualizado',
+           'description' => $package->description . 'new',
+           'image' => $package->image ,
+           'price' => $package->price
+       ]);
+
+       $response
+        ->assertStatus(200)
+        ->assertJsonFragment([
+            'title' => $package->title . 'nombre actualizado',
+            'description' => $package->description . 'new',
+            'image' => $package->image ,
+            'price' => $package->price
+        ]);
+    }
+
+    public function test_update_a_package_adding_registered_series(){
         $package = factory(Package::class)->create();
-        $series = factory(Serie::class, 3)
-            ->create()
-            ->each(function ($serie) {
-                $serie->packages()->attach(Package::all()->first());
-            });
+        $serie = factory(Serie::class)->create();
+        $package->series()->attach($serie);
 
-        $response = $this->post('/api/v1/packages/'. $package->id . '/series' ,[
-            "series" => [
+        $newPackageSerie = factory(Serie::class)->create();
+        $response = $this->put('/api/v1/packages/'. $package->id . '/series', [
+            'series'=>[
                 [
-                    'name' => 'El señor de los anillos 1',
-                    'description' => 'Primera entrega de la saga fantastica',
-                    'image' => 'https://i.ebayimg.com/images/g/RZwAAOSwLtxcp6WK/s-l1600.jpg'
+                    'id'=> $newPackageSerie->id,
+                    'name' => $newPackageSerie->name,
+                    'description' => $newPackageSerie->description,
+                    'image' => $newPackageSerie->image
                 ]
             ]
         ]);
 
-        $response->assertStatus(200)
-            ->assertJsonFragment([
-                [
-                    'name' => 'El señor de los anillos 1',
-                    'description' => 'Primera entrega de la saga fantastica',
-                    'image' => 'https://i.ebayimg.com/images/g/RZwAAOSwLtxcp6WK/s-l1600.jpg'
+        $response
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                'id',
+                'title',
+                'description',
+                'image',
+                'price',
+                'series' => [
+                    [
+                        'description',
+                        'id',
+                        'image',
+                        'name'
+                    ]
                 ]
+            ])
+            ->assertJsonFragment([
+                'description' => $newPackageSerie->description,
+                'id'=> $newPackageSerie->id,
+                'image' => $newPackageSerie->image,
+                'name' => $newPackageSerie->name
             ]);
     }
 
+    public function test_update_a_package_removing_registered_series(){
+        $package = factory(Package::class)->create();
+        $serieOne = factory(Serie::class) ->create();
+        $serieTwo = factory(Serie::class) ->create();
+        $package->series()->attach($serieOne);
+        $package->series()->attach($serieTwo);
+
+        $response = $this->delete('/api/v1/packages/'. $package->id . '/series', [
+            'series'=>[
+                [
+                    'id'=> $serieTwo->id,
+                    'name' => $serieTwo->name,
+                    'description' => $serieTwo->description,
+                    'image' => $serieTwo->image
+                ]
+            ]
+        ]);
+
+        $response
+            ->assertStatus(204);
+    }
+
+
+    public function test_destroy_a_package(){
+        $package = factory(Package::class)->create();
+
+        $serie = factory(Serie::class)->create();
+        $package->series()->attach($serie);
+
+        $response = $this->delete('/api/v1/packages/'. $package->id);
+
+        $response->assertStatus(204);
+        $this->assertDatabaseMissing("packages", ["id" => $package->id]);
+    }
 }

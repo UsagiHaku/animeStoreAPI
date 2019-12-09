@@ -80,63 +80,69 @@ class PackageController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id){
+        $package = Package::find($id);
+        if(!$package){
+            abort(404);
+        }
+        $package->update($request->all());
+        return response()->json($package, 200);
+    }
+
+    public function addSeries(Request $request, $id){
         $package = Package::with('series')->find($id);
         if(!$package){
             abort(404);
         }
-        $package->fill($request->all())->save();
 
         $series = $request->get('series');
-
-        if($series == null || empty($series)){
-            abort(400);
+        $allSeriesExist = true;
+        foreach($series as $serie){
+            if(!(array_key_exists("id", $serie) && Serie::find($serie["id"]))){
+                $allSeriesExist = false;
+                break;
+            }
         }
 
-        $packageSeries = $package->series()->get();
+        if(!$allSeriesExist){
+            abort(404);
 
-        //checo en busca de series que no estén en el paquete y las añado
-        $addSerie = true;
+        }
+
         foreach($series as $serie){
-            if(array_key_exists("id", $serie) && Serie::find($serie["id"])){
-                foreach ($packageSeries as $packageSerie){
-                   if($serie["id"] == $packageSerie["id"]){
-                       $addSerie = false;
-                       break;
-                   }
+            $newSerie = Serie::find($serie["id"]);
+            $newSerie->save();
+            $package->series()->attach($newSerie);
+        }
 
-               }
+        return response()->json(Package::with('series')->find($id), 200);
+    }
+
+    public function removeSeries(Request $request, $id){
+        $package = Package::with('series')->find($id);
+        if(!$package){
+            abort(404);
+        }
+
+        $series = $request->get('series');
+        $allSeriesExist = true;
+        foreach($series as $serie){
+            if(!(array_key_exists("id", $serie) && Serie::find($serie["id"]))){
+                $allSeriesExist = false;
+                break;
             }
-            if($addSerie == true){
+        }
+
+        if($allSeriesExist){
+            foreach($series as $serie){
                 $newSerie = Serie::find($serie["id"]);
                 $newSerie->save();
-                $package->series()->attach($newSerie);
+                $package->series()->detach($newSerie);
             }
-            $addSerie = true;
+        }else{
+            abort(404);
         }
-
-        $removeSerie = true;
-        $packageSeries= $package->series()->get();
-
-        //checo en busca de series que estén en el paquete y pero no en las series recibidas y las elimino
-        foreach($packageSeries as $packageSerie){
-            foreach ($series as $serie){
-                if($packageSerie["id"] == $serie["id"]){
-                    $removeSerie = false;
-                    break;
-                }
-
-            }
-            if($removeSerie == true){
-                $removedSerie = Serie::find($packageSerie["id"]);
-                $removedSerie->save();
-                $package->series()->detach($removedSerie);
-            }
-            $removeSerie = true;
-        }
-
-        return response()->json($package, 201);
+        return response(null, 204);
     }
 
     /**
@@ -150,10 +156,9 @@ class PackageController extends Controller
             abort(404);
         }
 
-        $packageDestroyed = Package::destroy($id);
-        if(!$packageDestroyed) {
-            abort(404);
-        }
+        $package->series()->detach();
+        Package::destroy($id);
+
         return response(null, 204);
     }
 
