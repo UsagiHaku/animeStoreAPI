@@ -80,68 +80,69 @@ class PackageController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update(Request $request, $id)
-    {
-        $package = Package::with('series')->find($id);
-        $series = $request->get('series');
+    public function update(Request $request, $id){
+        $package = Package::find($id);
+        if(!$package){
+            abort(404);
+        }
+        $package->update($request->all());
+        return response()->json($package, 200);
+    }
 
-        if(!$package || $series == null || empty($series)){
-            response()->json(null,404);
+    public function addSeries(Request $request, $id){
+        $package = Package::with('series')->find($id);
+        if(!$package){
+            abort(404);
         }
 
-        foreach ($series as $serie){
-            if(!(array_key_exists("id", $serie) &&
-                Serie::find($serie["id"]))
-            ){
-                response()->json(null, 404);
+        $series = $request->get('series');
+        $allSeriesExist = true;
+        foreach($series as $serie){
+            if(!(array_key_exists("id", $serie) && Serie::find($serie["id"]))){
+                $allSeriesExist = false;
+                break;
             }
         }
 
-        $package->fill($request->all())->save();
-        $packageSeries = $package->series()->get();
-        //checo en busca de series que no estén en el paquete y las añado
-        $addSerie = true;
+        if(!$allSeriesExist){
+            abort(404);
+
+        }
+
         foreach($series as $serie){
+            $newSerie = Serie::find($serie["id"]);
+            $newSerie->save();
+            $package->series()->attach($newSerie);
+        }
 
-            foreach ($packageSeries as $packageSerie){
-                $serieTemp = new Serie($serie);
-                if($serieTemp->id ==
-                    $packageSerie->id) {
-                    $addSerie = false;
-                }
-           }
+        return response()->json(Package::with('series')->find($id), 200);
+    }
 
-            print($serie["name"]);
-            if($addSerie == true){
+    public function removeSeries(Request $request, $id){
+        $package = Package::with('series')->find($id);
+        if(!$package){
+            abort(404);
+        }
+
+        $series = $request->get('series');
+        $allSeriesExist = true;
+        foreach($series as $serie){
+            if(!(array_key_exists("id", $serie) && Serie::find($serie["id"]))){
+                $allSeriesExist = false;
+                break;
+            }
+        }
+
+        if($allSeriesExist){
+            foreach($series as $serie){
                 $newSerie = Serie::find($serie["id"]);
                 $newSerie->save();
-                $package->series()->attach($newSerie);
+                $package->series()->detach($newSerie);
             }
-            $addSerie = true;
+        }else{
+            abort(404);
         }
-
-        $removeSerie = true;
-        $packageSeries= $package->series()->get();
-
-        //checo en busca de series que estén en el paquete y pero no en las series recibidas y las elimino
-        foreach($packageSeries as $packageSerie){
-            foreach ($series as $serie){
-                if($packageSerie["id"] == $serie["id"]){
-                    $removeSerie = false;
-                    break;
-                }
-
-            }
-            if($removeSerie == true){
-                $removedSerie = Serie::find($packageSerie["id"]);
-                $removedSerie->save();
-                $package->series()->detach($removedSerie);
-            }
-            $removeSerie = true;
-        }
-        $package->save();
-
-        return response()->json($package, 200);
+        return response(null, 204);
     }
 
     /**
