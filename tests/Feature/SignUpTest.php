@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-
 class SignUpTest extends TestCase
 {
     use RefreshDatabase;
@@ -16,20 +15,22 @@ class SignUpTest extends TestCase
     public function test_client_can_create_user()
     {
         $user = [
-            "name" => "nuevousuario",
-            "email" => "nuevousuario@correo.com",
+            "name" => "user",
+            "email" => "user@correo.com",
             "password" => "unodostres123"
         ];
-        $response = $this->json('POST', '/api/v1/signup', $user);
+
+        $response = $this->json('POST', 'api/v1/signup', $user);
 
         $response
             ->assertStatus(201)
-            ->assertJsonFragment([
-                "data" => [
-                    'type' => 'Users',
+            ->assertJsonStructure([
+                'data' => [
+                    'type',
                     'attributes' => [
-                        'name' => $user['name'],
-                        'email' => $user["email"]
+                        'name',
+                        'email',
+                        'api_token'
                     ]
                 ]
             ]);
@@ -119,7 +120,7 @@ class SignUpTest extends TestCase
             "password" => "unodostres123"
         ];
 
-        $this->json('POST','/api/v1/signup',$usuario);
+        $this->json('POST', '/api/v1/signup', $usuario);
         $response = $this->json('POST', '/api/v1/signup', $user);
 
         $response
