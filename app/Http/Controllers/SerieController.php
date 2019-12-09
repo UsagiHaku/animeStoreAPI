@@ -25,7 +25,8 @@ class SerieController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $serie = Serie::create($request->all());
+        return response()->json($serie, 201);
     }
 
     /**
@@ -52,7 +53,9 @@ class SerieController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $serie = Serie::find($id);
+        $serie->update($request->all());
+        return response()->json($serie, 200);
     }
 
     /**
@@ -63,6 +66,12 @@ class SerieController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $serie = Serie::find($id);
+        $serie->packages()->detach();
+        $serie->categories()->detach();
+        $serie->users()->detach();
+        $serie->comments()->delete();
+        Serie::destroy($id);
+        return response(null, 204);
     }
 }

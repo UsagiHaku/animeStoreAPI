@@ -6,10 +6,13 @@ use App\Package;
 use App\Serie;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Category;
+use App\Comment;
+use App\User;
 
 class SerieTest extends TestCase
 {
-    use RefreshDatabase;//cada que corra una prueba re hace la base de datos
+    use RefreshDatabase;
     /**
      * A basic feature test example.
      *
@@ -62,5 +65,61 @@ class SerieTest extends TestCase
             ->assertStatus(200)
             ->assertJsonCount(3, 'packages');
     }
+    public function test_create_a_serie_will_returns_the_created_serie() {
+                $response = $this->post('/api/v1/series', [
+                    'name' => 'El señor de los anillos',
+                    'description' => 'La mejor saga fantastica',
+                    'image' => 'https://i.ebayimg.com/images/g/RZwAAOSwLtxcp6WK/s-l1600.jpg'
+                ]);
+
+                $response
+                    ->assertStatus(201)
+                    ->assertJsonFragment([
+                        'name' => 'El señor de los anillos',
+                        'description' => 'La mejor saga fantastica',
+                        'image' => 'https://i.ebayimg.com/images/g/RZwAAOSwLtxcp6WK/s-l1600.jpg'
+                    ])
+                   ->assertJsonCount(6);
+    }
+
+    public function test_update_a_serie_will_returns_the_updated_serie() {
+            $serie = factory(Serie::class)->create();
+
+            $response = $this->put('/api/v1/series/'. $serie->id, [
+                'name' => 'El señor de los anillos',
+                'description' => 'La mejor saga fantastica'
+            ]);
+
+            $response
+                ->assertStatus(200)
+                ->assertJsonFragment([
+                    'name' => 'El señor de los anillos',
+                    'description' => 'La mejor saga fantastica',
+                    ])
+                ->assertJsonCount(6);
+    }
+
+   public function test_delete_a_serie_will_returns_empty_response() {
+            $package = factory(Package::class)->create();
+            $category = factory(Category::class)->create();
+            $user = factory(User::class)->create();
+            $serie = factory(Serie::class)->create();
+            $comment = factory(Comment::class)->create([
+                    "serie_id" => $serie->id,
+                    "user_id" => factory(User::class)->create()
+                    ]);
+
+                    $serie->comments()->save($comment);
+            $serie->packages()->attach($package);
+            $serie->categories()->attach($category);
+            $serie->users()->attach($user);
+
+            $response = $this->delete('/api/v1/series/'. $serie->id);
+
+            $response->assertStatus(204);
+
+            $this->assertDatabaseMissing("series", ["id" => $serie->id]);
+        }
+
 
 }
