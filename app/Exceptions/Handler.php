@@ -56,14 +56,14 @@ class Handler extends ExceptionHandler
         if ($exception instanceof UnauthorizedHttpException) {
             $preException = $exception->getPrevious();
             if ($preException instanceof TokenExpiredException) {
-                return response()->json(['error' => 'TOKEN_EXPIRED']);
+                return response()->json(['error' => 'TOKEN_EXPIRED'], 401);
             } else if ($preException instanceof TokenInvalidException) {
-                return response()->json(['error' => 'TOKEN_INVALID']);
+                return response()->json(['error' => 'TOKEN_INVALID'], 401);
             } else if ($preException instanceof TokenBlacklistedException) {
-                return response()->json(['error' => 'TOKEN_BLACKLISTED']);
+                return response()->json(['error' => 'TOKEN_BLACKLISTED'], 401);
             }
             if ($exception->getMessage() === 'Token not provided') {
-                return response()->json(['error' => 'Token not provided']);
+                return response()->json(['error' => 'Token not provided'], 401);
             }
         }
 

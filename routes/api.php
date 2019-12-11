@@ -18,19 +18,20 @@ Route::middleware('auth:api')->post('v1/series/{id}/comments','CommentController
 Route::middleware('auth:api')->get('v1/series/{id}/comments','CommentController@list');
 
 Route::group(['prefix' => 'v1'], function () {
-    Route::apiResource('series', 'SerieController');
-    Route::apiResource('packages','PackageController');
-    Route::put('packages/{id}/series','PackageController@addSeries');
-    Route::delete('packages/{id}/series','PackageController@removeSeries');
-    Route::apiResource('series/comments','CommentController');
-    Route::apiResource('comments','CommentController');
-    Route::apiResource('users/{id}/orders','OrderController');
+    Route::group(['middleware' => 'jwt.auth'], function () {
+        Route::apiResource('series', 'SerieController');
+        Route::apiResource('packages','PackageController');
+        Route::put('packages/{id}/series','PackageController@addSeries');
+        Route::delete('packages/{id}/series','PackageController@removeSeries');
+        Route::apiResource('series/comments','CommentController');
+        Route::apiResource('comments','CommentController');
+        Route::apiResource('orders','OrderController');
+
+        Route::post('logout', 'AuthController@logout');
+        Route::post('refresh', 'AuthController@refresh');
+        Route::get('me', 'AuthController@me');
+    });
+
     Route::post('signup', 'AuthController@signup');
     Route::post('login', 'AuthController@login');
-});
-
-Route::group(['prefix' => 'v1', 'middleware' => 'jwt.auth'], function ($router) {
-    Route::post('logout', 'AuthController@logout');
-    Route::post('refresh', 'AuthController@refresh');
-    Route::get('me', 'AuthController@me');
 });
