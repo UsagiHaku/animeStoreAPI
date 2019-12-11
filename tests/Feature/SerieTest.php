@@ -93,7 +93,7 @@ class SerieTest extends TestCase
                 'description' => 'La mejor saga fantastica',
                 'image' => 'https://i.ebayimg.com/images/g/RZwAAOSwLtxcp6WK/s-l1600.jpg'
             ])
-            ->assertJsonCount(6);
+            ->assertJsonCount(3,"data.attributes");
     }
 
     public function test_update_a_serie_will_returns_the_updated_serie()
@@ -139,6 +139,33 @@ class SerieTest extends TestCase
         $this->assertDatabaseMissing("series", ["id" => $serie->id]);
     }
 
+    public function test_get_all_packages_with_one_particular_serie(){
+        $this->withoutExceptionHandling();
+        $serie = factory(Serie::class)->create();
+
+        factory(Package::class, 3)
+            ->create()
+            ->each(function ($package) {
+                $package->series()->attach(Serie::all()->first());
+            });
+
+        $response = $this->get('/api/v1/series/'. $serie->id .'/packages',
+            $this->authHeader($this->createSession())
+        );
+
+        $response
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                [
+                    'description',
+                    'id',
+                    'image',
+                    'title'
+                ]
+            ]);
+    }
+
+
     public function test_list_my_series()
     {
         $loginResponse = $this->createSession();
@@ -152,7 +179,6 @@ class SerieTest extends TestCase
         $response = $this->get('/api/v1/user/series/',
             $this->authHeader($loginResponse)
         );
-
         $response
             ->assertStatus(200)
             ->assertJsonCount(4);

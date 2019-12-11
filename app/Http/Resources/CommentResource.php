@@ -25,14 +25,14 @@ class CommentResource extends JsonResource
         $user_name = $user->name;
 
         return [
-          'data' => [
-              'type' => 'Comments',
-              'attributes' => [
-                  'description' => $this->description,
-                  'serie' => $serie_name,
-                  'made by' => $user_name
-              ]
-          ]
+            'data' => [
+                'type' => 'Comments',
+                'attributes' => [
+                    'description' => $this->description,
+                    'serie' => $serie_name,
+                    'made by' => $user_name
+                ]
+            ]
         ];
     }
 }
