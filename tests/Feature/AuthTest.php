@@ -184,7 +184,7 @@ class AuthTest extends TestCase
         $response = $this->post('/api/v1/logout');
 
         $response
-            ->assertStatus(200)
+            ->assertStatus(401)
             ->assertJsonFragment(
                 ['error' => 'Token not provided']
             );
@@ -195,7 +195,7 @@ class AuthTest extends TestCase
         $response = $this->post('/api/v1/refresh');
 
         $response
-            ->assertStatus(200)
+            ->assertStatus(401)
             ->assertJsonFragment(
                 ['error' => 'Token not provided']
             );
@@ -206,7 +206,7 @@ class AuthTest extends TestCase
         $response = $this->get('/api/v1/me');
 
         $response
-            ->assertStatus(200)
+            ->assertStatus(401)
             ->assertJsonFragment(
                 ['error' => 'Token not provided']
             );
