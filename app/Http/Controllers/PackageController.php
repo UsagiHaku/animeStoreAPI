@@ -153,6 +153,13 @@ class PackageController extends Controller
         return response()->json($package->series()->get(),200);
     }
 
+    public function getSerieOfPackage($id_package,$id_serie){
+        $package = Package::with('series')->find($id_package);
+        if(!$package){
+            abort(404);
+        }
+        return response()->json($package->series()->get($id_serie),200);
+    }
     /**
      * Remove the specified resource from storage.
      * @param  int  $id
