@@ -19,6 +19,7 @@ class UserResource extends JsonResource
             'data' => [
                 'type' => 'Users',
                 'attributes' => [
+                    'id' => $this->id,
                     'name' => $this->name,
                     'email' => $this->email,
                     'api_token' => $this->api_token

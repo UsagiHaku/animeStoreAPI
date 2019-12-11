@@ -15,7 +15,7 @@ class User extends Authenticatable implements JWTSubject
      *
      * @var array
      */
-    protected $fillable = ['id','name', 'email', 'password','api_token','image'];
+    protected $fillable = ['id', 'name', 'email', 'password', 'api_token', 'image'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -33,12 +33,19 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    public function series(){
+    public function series()
+    {
         return $this->belongsToMany('App\Serie');
     }
 
-    public function comments(){
+    public function comments()
+    {
         return $this->hasMany('App\Comment');
+    }
+
+    public function orders()
+    {
+        return $this->hasMany('App\Order');
     }
 
     // Rest omitted for brevity

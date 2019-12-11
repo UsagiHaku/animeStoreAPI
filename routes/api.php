@@ -23,13 +23,13 @@ Route::group(['prefix' => 'v1'], function () {
         Route::apiResource('packages','PackageController');
         Route::put('packages/{id}/series','PackageController@addSeries');
         Route::delete('packages/{id}/series','PackageController@removeSeries');
-        Route::apiResource('series/comments','CommentController');
-        Route::apiResource('comments','CommentController');
         Route::apiResource('orders','OrderController');
         Route::get('packages/{id}/series','PackageController@getPackageSeries');
-        Route::get('api/v1/packages/{id_package}/series/{id_serie}','PackageController@getSerieOfPackage');
+        Route::get('packages/{id_package}/series/{id_serie}','PackageController@getSerieOfPackage');
         Route::apiResource('series/{id}/comments', 'CommentController');
         Route::get('series/{id}/packages', 'SerieController@getPackages');
+        Route::get('/user/series', 'SerieController@mySeries');
+        Route::apiResource('series/comments','CommentController');
         Route::post('logout', 'AuthController@logout');
         Route::post('refresh', 'AuthController@refresh');
         Route::get('me', 'AuthController@me');

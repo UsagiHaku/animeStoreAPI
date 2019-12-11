@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Resources\SerieResource;
 use App\Serie;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class SerieController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -21,8 +22,8 @@ class SerieController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -35,13 +36,13 @@ class SerieController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return Response
      */
     public function show($id)
     {
         $serie = Serie::with('packages', 'categories', 'comments', 'comments.user')->find($id);
-        if(!$serie){
+        if (!$serie) {
             abort(404);
         }
         return response()->json($serie);
@@ -58,9 +59,9 @@ class SerieController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param int $id
+     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -72,8 +73,8 @@ class SerieController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return Response
      */
     public function destroy($id)
     {
@@ -84,5 +85,14 @@ class SerieController extends Controller
         $serie->comments()->delete();
         Serie::destroy($id);
         return response(null, 204);
+    }
+
+    /**
+     * @return Response
+     */
+    public function mySeries()
+    {
+        $mySeries = auth('api')->user()->series()->get();
+        return response()->json($mySeries, 200);
     }
 }

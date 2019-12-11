@@ -166,4 +166,21 @@ class SerieTest extends TestCase
     }
 
 
+    public function test_list_my_series()
+    {
+        $loginResponse = $this->createSession();
+
+        $myUser = $this->myUser($loginResponse);
+
+        factory(Serie::class, 4)->create()->each(function ($serie) use ($myUser) {
+            $myUser->series()->attach($serie);
+        });
+
+        $response = $this->get('/api/v1/user/series/',
+            $this->authHeader($loginResponse)
+        );
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(4);
+    }
 }
