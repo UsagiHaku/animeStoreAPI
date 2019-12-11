@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\SerieResource;
 use App\Serie;
 use Illuminate\Http\Request;
 
@@ -26,8 +27,10 @@ class SerieController extends Controller
     public function store(Request $request)
     {
         $serie = Serie::create($request->all());
-        return response()->json($serie, 201);
+
+        return response()->json(new SerieResource($serie), 201);
     }
+
 
     /**
      * Display the specified resource.
@@ -42,6 +45,14 @@ class SerieController extends Controller
             abort(404);
         }
         return response()->json($serie);
+    }
+
+    public function getPackages($id){
+        $serie = Serie::with('packages')->find($id);
+        if(!$serie){
+            abort(404);
+        }
+        return response()->json($serie->packages()->get(),200);
     }
 
     /**

@@ -29,7 +29,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('packages/{id}/series','PackageController@getPackageSeries');
         Route::get('api/v1/packages/{id_package}/series/{id_serie}','PackageController@getSerieOfPackage');
         Route::apiResource('series/{id}/comments', 'CommentController');
-
+        Route::get('series/{id}/packages', 'SerieController@getPackages');
         Route::post('logout', 'AuthController@logout');
         Route::post('refresh', 'AuthController@refresh');
         Route::get('me', 'AuthController@me');
