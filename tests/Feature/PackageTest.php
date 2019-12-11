@@ -246,5 +246,4 @@ class PackageTest extends TestCase
             ]);
     }
 
-
 }
