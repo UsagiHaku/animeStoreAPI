@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Comment;
-use App\Http\Requests\CreateCommentRequest;
-use App\Http\Resources\CommentResource;
 use App\Http\Resources\ListCommentResource;
 use App\Serie;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+
 
 class CommentController extends Controller
 {
@@ -32,44 +30,53 @@ class CommentController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \App\Http\Resources\CommentResource
      */
-    public function store(CreateCommentRequest $request)
+    public function store($id, Request $request)
     {
-        $token = $request->bearerToken();
-
-        $id_serie = $request->route('id');
-
-        $user = DB::table('users')->where('api_token', '=', $token)->first();
-
-        $serie_user_exists = DB::table('serie_user')
-            ->where([
-                ['serie_id', '=', $id_serie],
-                ['user_id', '=', $user->id]
-            ])
-            ->exists();
-
-        if ($serie_user_exists) {
-            $comment_id = DB::table('comments')->insertGetId([
-                'description' => $request->get('description'),
-                'user_id' => $user->id,
-                'serie_id' => $id_serie
-            ]);
-
-            $comment = Comment::findOrFail($comment_id);
-
-            return new CommentResource($comment);
-
-        } else {
-            return response()->json([
-                "errors" => [
-                    "code" => "ERROR-5",
-                    "title" => "Serie Not Purchased",
-                    "message" => "No posee esta serie en su inventario"
-                ]
-            ], 401);
+        $serie = Serie::with('comments')->find($id);
+        if(!$serie){
+            abort(404);
         }
 
+        $comment = new Comment($request->all());
+        $comment->user()->associate(auth('api')->user());
+        $serie->comments()->save($comment);
+
+        return response()->json($comment, 201);
     }
 
+    // $token = $request->bearerToken();
+    //
+    //        $id_serie = $request->route('id');
+    //
+    //        $user = DB::table('users')->where('api_token', '=', $token)->first();
+    //
+    //        $serie_user_exists = DB::table('serie_user')
+    //            ->where([
+    //                ['serie_id', '=', $id_serie],
+    //                ['user_id', '=', $user->id]
+    //            ])
+    //            ->exists();
+    //
+    //        if ($serie_user_exists) {
+    //            $comment_id = DB::table('comments')->insertGetId([
+    //                'description' => $request->get('description'),
+    //                'user_id' => $user->id,
+    //                'serie_id' => $id_serie
+    //            ]);
+    //
+    //            $comment = Comment::findOrFail($comment_id);
+    //
+    //            return new CommentResource($comment);
+    //
+    //        } else {
+    //            return response()->json([
+    //                "errors" => [
+    //                    "code" => "ERROR-5",
+    //                    "title" => "Serie Not Purchased",
+    //                    "message" => "No posee esta serie en su inventario"
+    //                ]
+    //            ], 401);
+    //        }
     /**
      * Display the specified resource.
      *

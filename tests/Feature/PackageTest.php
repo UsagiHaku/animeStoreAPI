@@ -230,7 +230,9 @@ class PackageTest extends TestCase
             ->each(function ($serie) {
                 $serie->packages()->attach(Package::all()->first());
             });
-        $response = $this->get('/api/v1/packages/'. $package->id .'/series');
+        $response = $this->get('/api/v1/packages/'. $package->id .'/series',
+            $this->authHeader($this->createSession())
+        );
 
         $response
             ->assertStatus(200)

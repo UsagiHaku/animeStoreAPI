@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Category;
+use App\Comment;
 use App\Package;
 use App\Serie;
+use App\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
