@@ -61,8 +61,8 @@ class RegisterController extends Controller
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
-     * @return \App\Http\Resources\UserResource
+     * @param CreateUserRequest $request
+     * @return UserResource
      */
     protected function store(CreateUserRequest $request)
     {

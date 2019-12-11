@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -11,15 +14,8 @@
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::middleware('auth:api')->post('v1/series/{id}/comments','CommentController@store');
 Route::middleware('auth:api')->get('v1/series/{id}/comments','CommentController@list');
-
-Route::post('v1/signup','Auth\RegisterController@store');
-Route::get('v1/users','UserController@show')->name('users.show');
 
 Route::group(['prefix' => 'v1'], function () {
     Route::apiResource('series', 'SerieController');
@@ -28,8 +24,13 @@ Route::group(['prefix' => 'v1'], function () {
     Route::delete('packages/{id}/series','PackageController@removeSeries');
     Route::apiResource('series/comments','CommentController');
     Route::apiResource('comments','CommentController');
-    Route::apiResource('users/:id/orders','OrderController');
+    Route::apiResource('users/{id}/orders','OrderController');
+    Route::post('signup', 'AuthController@signup');
+    Route::post('login', 'AuthController@login');
 });
 
-
-
+Route::group(['prefix' => 'v1', 'middleware' => 'jwt.auth'], function ($router) {
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::get('me', 'AuthController@me');
+});
