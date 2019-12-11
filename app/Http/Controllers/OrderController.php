@@ -5,25 +5,29 @@ namespace App\Http\Controllers;
 use App\Order;
 use App\OrderItem;
 use App\Package;
+use App\Serie;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class OrderController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
+        $myOrders = auth('api')->user()->orders()->with('orderItems.package')->get();
 
+        return response()->json($myOrders);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -31,26 +35,38 @@ class OrderController extends Controller
         $orderItems = $request->get("order_items");
         $order = new Order();
 
-        foreach($orderItems as $orderItem) {
+        foreach ($orderItems as $orderItem) {
             $package = Package::find($orderItem['package_id']);
 
-            if(!$package) {
+            if (!$package) {
                 return response()->json([
                     "error" => "Some Package doesn't exists"
-                ]);
+                ], 404);
             }
+
             $total += $package->price;
-
-            $orderItem = new OrderItem();
-
-            $orderItem->orders()->associate($order);
-            $orderItem->packages()->associate($package);
-            $orderItem->save();
         }
 
         $order->total = $total;
         $order->card_id = "0";
-        $order->user()->save(auth('api')->user());
+        $order->delivery_date = now();
+        $order->user()->associate(auth('api')->user());
+
+        $order->save();
+
+        foreach ($orderItems as $orderItem) {
+            $package = Package::find($orderItem['package_id']);
+            $orderItem = new OrderItem();
+
+            $orderItem->order()->associate($order);
+            $orderItem->package()->associate($package);
+            $orderItem->save();
+
+            foreach ($package->series()->get() as $serie) {
+                auth("api")->user()->series()->save($serie);
+                auth("api")->user()->save();
+            }
+        }
 
         $order->save();
 
@@ -60,10 +76,9 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function show($id)
+    public function show()
     {
 
     }
@@ -71,9 +86,9 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param int $id
+     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -83,8 +98,8 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return Response
      */
     public function destroy($id)
     {
