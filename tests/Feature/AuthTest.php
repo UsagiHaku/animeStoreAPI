@@ -2,16 +2,16 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\User;
+use Illuminate\Foundation\Testing\TestResponse;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class SignUpTest extends TestCase
+class AuthTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * SIGNUP-01
-     */
     public function test_client_can_create_user()
     {
         $user = [
@@ -177,5 +177,86 @@ class SignUpTest extends TestCase
                     "message" => "Un atributo enviado no es correcto"
                 ]
             ]);
+    }
+
+    public function test_logout_without_token_returns_error_message()
+    {
+        $response = $this->post('/api/v1/logout');
+
+        $response
+            ->assertStatus(200)
+            ->assertJsonFragment(
+                ['error' => 'Token not provided']
+            );
+    }
+
+    public function test_refresh_without_token_returns_error_message()
+    {
+        $response = $this->post('/api/v1/refresh');
+
+        $response
+            ->assertStatus(200)
+            ->assertJsonFragment(
+                ['error' => 'Token not provided']
+            );
+    }
+
+    public function test_me_without_token_returns_error_message()
+    {
+        $response = $this->get('/api/v1/me');
+
+        $response
+            ->assertStatus(200)
+            ->assertJsonFragment(
+                ['error' => 'Token not provided']
+            );
+    }
+
+    public function test_login_should_return_a_token()
+    {
+        $response = $this->post('/api/v1/signup', [
+            "name" => "Sheila Ricalde",
+            "email" => "sheilaricalde@gmail.com",
+            "password" => "passw0rd"
+        ]);
+
+        $response->assertStatus(201);
+
+        $response = $this->post('/api/v1/login', [
+            "email" => "sheilaricalde@gmail.com",
+            "password" => "passw0rd"
+        ]);
+
+        $response->assertStatus(200);
+    }
+
+    public function test_me_should_return_my_logged_user()
+    {
+        $response = $this->post('/api/v1/signup', [
+            "name" => "Sheila Ricalde",
+            "email" => "sheilaricalde@gmail.com",
+            "password" => "passw0rd"
+        ]);
+
+        $response->assertStatus(201);
+
+        $loginResponse = $this->post('/api/v1/login', [
+            "email" => "sheilaricalde@gmail.com",
+            "password" => "passw0rd"
+        ]);
+
+        $loginResponse->assertStatus(200);
+
+        $response = $this->get('/api/v1/me', $this->authHeader($loginResponse));
+
+        $response->assertJsonStructure([
+            'data' => [
+                'type',
+                'attributes' => [
+                    'name',
+                    'email'
+                ]
+            ]
+        ]);
     }
 }
