@@ -205,8 +205,7 @@ class PackageTest extends TestCase
             ]
         ], $this->authHeader($this->createSession()));
 
-        $response
-            ->assertStatus(204);
+        $response->assertStatus(204);
     }
 
 
@@ -223,4 +222,26 @@ class PackageTest extends TestCase
         $response->assertStatus(204);
         $this->assertDatabaseMissing("packages", ["id" => $package->id]);
     }
+
+    public function test_get_all_series_of_one_package(){
+        $package = factory(Package::class)->create();
+        factory(Serie::class, 3)
+            ->create()
+            ->each(function ($serie) {
+                $serie->packages()->attach(Package::all()->first());
+            });
+        $response = $this->get('/api/v1/packages/'. $package->id .'/series');
+
+        $response
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                [
+                    'description',
+                    'id',
+                    'image',
+                    'name'
+                ]
+            ]);
+    }
+
 }

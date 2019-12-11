@@ -6,9 +6,9 @@ use App\Comment;
 use App\Http\Requests\CreateCommentRequest;
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\ListCommentResource;
+use App\Serie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\User;
 
 class CommentController extends Controller
 {
@@ -17,9 +17,13 @@ class CommentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
-        return response()->json(Comment::all());
+        $serie = Serie::with('comments')->find($id);
+        if(!$serie){
+            abort(404);
+        }
+        return response()->json($serie->comments()->get(),200);
     }
 
     /**

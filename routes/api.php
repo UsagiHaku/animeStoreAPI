@@ -26,6 +26,9 @@ Route::group(['prefix' => 'v1'], function () {
         Route::apiResource('series/comments','CommentController');
         Route::apiResource('comments','CommentController');
         Route::apiResource('orders','OrderController');
+        Route::get('packages/{id}/series','PackageController@getPackageSeries');
+        Route::get('api/v1/packages/{id_package}/series/{id_serie}','PackageController@getSerieOfPackage');
+        Route::apiResource('series/{id}/comments', 'CommentController');
 
         Route::post('logout', 'AuthController@logout');
         Route::post('refresh', 'AuthController@refresh');
@@ -34,4 +37,5 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::post('signup', 'AuthController@signup');
     Route::post('login', 'AuthController@login');
+
 });

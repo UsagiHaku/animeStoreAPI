@@ -6,9 +6,6 @@ use App\Package;
 use App\Serie;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Category;
-use App\Comment;
-use App\User;
 
 class SerieTest extends TestCase
 {
@@ -76,6 +73,7 @@ class SerieTest extends TestCase
             ->assertStatus(200)
             ->assertJsonCount(3, 'packages');
     }
+
 
     public function test_create_a_serie_will_returns_the_created_serie()
     {
