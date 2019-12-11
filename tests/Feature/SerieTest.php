@@ -139,6 +139,24 @@ class SerieTest extends TestCase
         $this->assertDatabaseMissing("series", ["id" => $serie->id]);
     }
 
+    public function test_list_my_series()
+    {
+        $loginResponse = $this->createSession();
+
+        $myUser = $this->myUser($loginResponse);
+
+        factory(Serie::class, 4)->create()->each(function ($serie) use ($myUser) {
+            $myUser->series()->attach($serie);
+        });
+
+        $response = $this->get('/api/v1/user/series/',
+            $this->authHeader($loginResponse)
+        );
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(4);
+    }
+
     public function test_get_all_packages_with_one_particular_serie(){
         $this->withoutExceptionHandling();
         $serie = factory(Serie::class)->create();
@@ -166,21 +184,4 @@ class SerieTest extends TestCase
     }
 
 
-    public function test_list_my_series()
-    {
-        $loginResponse = $this->createSession();
-
-        $myUser = $this->myUser($loginResponse);
-
-        factory(Serie::class, 4)->create()->each(function ($serie) use ($myUser) {
-            $myUser->series()->attach($serie);
-        });
-
-        $response = $this->get('/api/v1/user/series/',
-            $this->authHeader($loginResponse)
-        );
-        $response
-            ->assertStatus(200)
-            ->assertJsonCount(4);
-    }
 }
