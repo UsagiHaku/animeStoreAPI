@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         factory(User::class,2)->create();
+
+
         factory(Serie::class,3)->create();
         factory(Package::class,3)->create();
         factory(Category::class,10)->create();
@@ -52,6 +54,10 @@ class DatabaseSeeder extends Seeder
                 ->attach(Serie::all()->random(1)->first());
         }
 
+        factory(User::class)->create([
+            "email" => "sheilaricalde@gmail.com",
+            "password" => "passw0rd"
+        ]);
 
     }
 }
