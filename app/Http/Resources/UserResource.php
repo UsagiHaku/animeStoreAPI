@@ -18,11 +18,19 @@ class UserResource extends JsonResource
         return [
             'data' => [
                 'type' => 'Users',
+                'id' => $this->id,
                 'attributes' => [
-                    'id' => $this->id,
                     'name' => $this->name,
                     'email' => $this->email,
+                    'api_token' => $this->api_token
+                ],
+                'series'=> SerieResource::collection($this->series),
+                'comments'=> CommentResource::collection($this->comments),
+                'orders' => OrderResource::collection($this->orders),
+                'links' => [
+                    'self' => url("/me")
                 ]
+
             ]
         ];
     }
