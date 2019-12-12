@@ -7,13 +7,31 @@ use App\Http\Resources\OrderResource;
 use App\Order;
 use App\OrderItem;
 use App\Package;
-use App\Serie;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class OrderController extends Controller
 {
+
     /**
+     * @OA\Get(
+     *      path="/api/v1/orders",
+     *      tags={"Orders"},
+     *      summary="Obtener todas las órdenes",
+     *      description="Regresa la información perteneciente a
+     *      todas las órdenes hechas por un usuario en particular",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Operacion exitosa"
+     *       ),
+     *      @OA\Response(response=401, description="Unauthorized"),
+     *      security={
+     *         {
+     *             "Bearer Auth": {"write:projects", "read:projects"}
+     *         }
+     *     },
+     * )
+     *
      * Display a listing of the resource.
      *
      * @return Response
@@ -26,10 +44,29 @@ class OrderController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/v1/orders",
+     *     summary="Crear una orden",
+     *     description="Añade la informacion perteneciente a una orden",
+     *      tags={"Orders"},
+     *     @OA\RequestBody(
      *
-     * @param Request $request
-     * @return Response
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="OK"
+     *     ),
+     *       @OA\Response(
+     *         response=404,
+     *         description="El paquete, como order item, no existe"
+     *     ),
+     *      @OA\Response(response=401, description="Unauthorized"),
+     *      security={
+     *         {
+     *             "Bearer Auth": {"write:projects", "read:projects"}
+     *         }
+     *     },
+     * )
      */
     public function store(CreateOrderRequest $request)
     {
