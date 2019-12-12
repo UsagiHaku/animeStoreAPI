@@ -24,14 +24,8 @@ class OrderTest extends TestCase
             ]
         ], $this->authHeader($this->createSession()));
 
-        $response->assertStatus(200)
-            ->assertJsonStructure([
-
-                'total',
-                'user'
-
-
-            ])->assertJsonFragment([
+        $response->assertStatus(201)
+            ->assertJsonFragment([
                 'total' => $packageOne->price + $packageTwo->price
             ]);
     }
