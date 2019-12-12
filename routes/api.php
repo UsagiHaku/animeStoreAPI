@@ -25,7 +25,6 @@ Route::group(['prefix' => 'v1'], function () {
         Route::apiResource('series/{id}/comments', 'CommentController');
         Route::get('series/{id}/packages', 'SerieController@getPackages');
         Route::get('/user/series', 'SerieController@mySeries');
-        Route::apiResource('series/comments','CommentController');
 
         Route::get('series/{id}/packages', 'SerieController@getPackages');
         Route::post('logout', 'AuthController@logout');

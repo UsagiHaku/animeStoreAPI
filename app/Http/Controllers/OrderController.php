@@ -15,7 +15,7 @@ class OrderController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/v1/orders",
+     *      path="/orders",
      *      tags={"Orders"},
      *      summary="Obtener todas las órdenes",
      *      description="Regresa la información perteneciente a
@@ -45,12 +45,17 @@ class OrderController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/v1/orders",
+     *     path="/orders",
      *     summary="Crear una orden",
      *     description="Añade la informacion perteneciente a una orden",
      *      tags={"Orders"},
      *     @OA\RequestBody(
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
      *
+     *             )
+     *         )
      *     ),
      *     @OA\Response(
      *         response=201,
@@ -109,7 +114,7 @@ class OrderController extends Controller
         }
 
         $order->save();
-        return new OrderResource($order);
+        return response()->json(new OrderResource($order), 201);
     }
 
     /**

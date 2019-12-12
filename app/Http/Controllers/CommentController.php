@@ -14,10 +14,19 @@ class CommentController extends Controller
 {
     /**
      * @OA\Get(
-     *      path="/api/v1/series/{series}/comments",
+     *      path="/series/{serie}/comments",
      *      tags={"Comments"},
      *      summary="Obtener los comentarios pertenecientes a una serie ",
      *      description="Regresa la informacion de todos los comentarios pertenecientes a una serie en particular",
+     *     @OA\Parameter(
+     *          name="serie",
+     *          description="Serie id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *      @OA\Response(
      *          response=200,
      *          description="Operacion exitosa"
@@ -43,19 +52,39 @@ class CommentController extends Controller
     {
         $serie = Serie::with('comments')->find($id);
         if(!$serie){
-            abort(404);
+            return response()->json([
+                "errors" => [
+                    "code" => "ERROR-2",
+                    "title" => "Resource not found",
+                    "message" => "No se encontro un recurso"
+                ]
+            ], 404);
         }
         return response()->json($serie->comments()->get(),200);
     }
 
     /**
      * @OA\Post(
-     *     path="/api/v1/series/comments",
-     *     summary="Añadir un comentario",
-     *     description="Añade la informacion perteneciente a un comentario en una serie en particular",
+     *      path="/series/{serie}/comments",
+     *      summary="Añadir un comentario",
+     *      description="Añade la informacion perteneciente a un comentario en una serie en particular",
      *      tags={"Comments"},
-     *     @OA\RequestBody(
+     *      @OA\Parameter(
+     *          name="serie",
+     *          description="Serie id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\RequestBody(
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
      *
+     *             )
+     *         ),
      *     ),
      *     @OA\Response(
      *         response=201,
@@ -72,12 +101,21 @@ class CommentController extends Controller
      *         }
      *     },
      * )
+     * @param $id
+     * @param CreateCommentRequest $request
+     * @return CommentResource
      */
     public function store($id, CreateCommentRequest $request)
     {
         $serie = Serie::with('comments')->find($id);
         if(!$serie){
-            abort(404);
+            return response()->json([
+                "errors" => [
+                    "code" => "ERROR-2",
+                    "title" => "Resource not found",
+                    "message" => "No se encontro un recurso"
+                ]
+            ], 404);
         }
 
         $comment = new Comment($request->all());

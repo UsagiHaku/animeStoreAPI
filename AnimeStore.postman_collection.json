@@ -1,0 +1,380 @@
+{
+	"info": {
+		"_postman_id": "a9fcd7c9-f892-43da-8526-99c9b8b2e202",
+		"name": "AnimeStore",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "22a70bd8-b69b-4e9d-a358-4e12acc4aba3",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"var token = jsonData.token;",
+									"pm.globals.set(\"anime_store_token\", token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"sheilaricalde1@gmail.com\",\n\t\"password\": \"passw0rd\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Sheila\",\n\t\"email\": \"sheilaricalde1@gmail.com\",\n\t\"password\": \"passw0rd\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/signup",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{anime_store_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/me",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Series",
+			"item": [
+				{
+					"name": "List All Series",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/series",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"series"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Series",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Packages",
+			"item": [
+				{
+					"name": "List all Packages",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/packages/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"packages",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get one product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store Package",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\": \"ghibli collection\",\n\t\"description\": \"Es un grupo conformado por El viaje de Chihiro  y el Castillo ambulante\",\n\t\"image\": \"https://www.geek.com/wp-content/uploads/2015/07/hayao_miyazaki_collection-625x350.jpg\",\n\t\"price\": 500.0,\n\t\"series\": [\n\t\t{\n\t\t\t\"id\": \"1\",\n\t\t\t\"name\": \"yoyoro\",\n\t\t\t\"description\": \"yoyoro\",\n\t\t\t\"image\": \"yoyoro\"\n\t\t}\n\t] \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/packages",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"packages"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8080/products/12",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Sprite\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/products/12",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"products",
+								"12"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add series to package",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update a package",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n        \"id\": 14,\n        \"title\": \"ghibli collection updated\",\n        \"description\": \"Es un grupo conformado por El viaje de Chihiro  y el Castillo ambulante\",\n        \"image\": \"https://www.geek.com/wp-content/uploads/2015/07/hayao_miyazaki_collection-625x350.jpg\",\n        \"price\": \"500\",\n        \"created_at\": \"2019-12-09 01:02:03\",\n        \"updated_at\": \"2019-12-09 01:02:03\",\n        \"series\": [\n            {\n                \"id\": 2,\n                \"name\": \"yoyoro\",\n                \"description\": \"yoyoro\",\n                \"image\": \"yoyoro\",\n                \"created_at\": \"2019-12-09 01:02:03\",\n                \"updated_at\": \"2019-12-09 01:02:03\"\n            }\n        ]\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/packages/14",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"packages",
+								"14"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add series in Update Package",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"series\": [\n        {\n            \"name\": \"yoyoro\",\n            \"description\": \"yoyoro\",\n            \"image\": \"yoyoro\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"yoyoro\",\n            \"description\": \"yoyoro\",\n            \"image\": \"yoyoro\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/packages/14/series",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"packages",
+								"14",
+								"series"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List All Series",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/series",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"series"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Series Of Package",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get serie of package",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

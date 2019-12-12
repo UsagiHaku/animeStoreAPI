@@ -18,17 +18,28 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         factory(User::class,2)->create();
+        factory(User::class)->create([
+            "email" => "sheilaricalde@gmail.com",
+            "password" => bcrypt("passw0rd")
+        ]);
+        $swagerUser =factory(User::class)->create([
+            "email" => "john@email.com",
+            "password" => bcrypt("thiswillbeencrypted")
+        ]);
 
-
-        factory(Serie::class,3)->create();
+        factory(Serie::class,10)->create();
         factory(Package::class,3)->create();
         factory(Category::class,10)->create();
-        factory(Comment::class,3)->create([
+        factory(Comment::class,30)->create([
             'user_id' => User::all()->random(1)->first(),
             'serie_id' => Serie::all()->random(1)->first()
         ]);
-        factory(Order::class,2)->create([
+        factory(Order::class, 3)->create([
             'user_id' => User::all()->random(1)->first(),
+        ]);
+
+        factory(Order::class)->create([
+            'user_id' => User::find($swagerUser->id)->id,
         ]);
 
         foreach (User::all() as $user) {
@@ -53,11 +64,5 @@ class DatabaseSeeder extends Seeder
             $category->series()
                 ->attach(Serie::all()->random(1)->first());
         }
-
-        factory(User::class)->create([
-            "email" => "sheilaricalde@gmail.com",
-            "password" => "passw0rd"
-        ]);
-
     }
 }

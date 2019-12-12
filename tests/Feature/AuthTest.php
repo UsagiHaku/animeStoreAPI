@@ -29,8 +29,7 @@ class AuthTest extends TestCase
                     'type',
                     'attributes' => [
                         'name',
-                        'email',
-                        'api_token'
+                        'email'
                     ]
                 ]
             ]);

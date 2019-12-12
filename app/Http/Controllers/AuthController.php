@@ -11,10 +11,6 @@ use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\JWTAuth;
 
-/**
- * @OA\Info(title="Anime Store API", version="1.0")
- */
-
 class AuthController extends Controller
 {
 
@@ -27,8 +23,9 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="api/v1/login",
-     *     summary="Log in",
+     *     path="/login",
+     *     summary="Iniciar sesion",
+     *     tags={"Auth"},
      *     @OA\RequestBody(
      *     required=true,
      *     @OA\MediaType(
@@ -56,9 +53,6 @@ class AuthController extends Controller
      * )
      * )
      *
-     */
-
-    /**
      * Get a JWT via given credentials.
      * @param $request
      * @return JsonResponse
@@ -83,8 +77,9 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="api/v1/signup",
-     *     summary="Create a new user",
+     *     path="/signup",
+     *     summary="Crea un nuevo usuario",
+     *     tags={"Auth"},
      *     @OA\RequestBody(
      *     required=true,
      *     @OA\MediaType(
@@ -116,9 +111,6 @@ class AuthController extends Controller
      * )
      * )
      *
-     */
-
-    /**
      * Get a JWT via given credentials.
      *
      * @param CreateUserRequest $request
@@ -134,6 +126,20 @@ class AuthController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/me",
+     *     summary="Obtener el usuario de la sesion actual",
+     *     tags={"Auth"},
+     *     @OA\Response(
+     *     response=201,
+     *     description="Usuario actual"
+     * ),
+     *     @OA\Response(
+     *     response=401,
+     *     description="Unauthorized"
+     * )
+     * )
+     *
      * Get the authenticated User.
      *
      * @return UserResource
@@ -144,6 +150,15 @@ class AuthController extends Controller
     }
 
     /**
+     * @OA\Post(
+     *     path="/logout",
+     *     summary="Cerrar sesion",
+     *     tags={"Auth"},
+     *      @OA\Response(
+     *      response=200,
+     *      description="User logged out"
+     *      ),
+     * )
      * Log the user out (Invalidate the token).
      *
      * @return JsonResponse
@@ -156,9 +171,19 @@ class AuthController extends Controller
     }
 
     /**
-     * Refresh a token.
+     * @OA\Post(
+     *     path="/refresh",
+     *     summary="Refrescar token",
+     *     tags={"Auth"},
+     *     @OA\Response(
+     *     response=200,
+     *     description="Token refrescado"
+     * ),
+     * )
      *
      * @return JsonResponse
+     *
+     * Refresh Token
      */
     public function refresh()
     {

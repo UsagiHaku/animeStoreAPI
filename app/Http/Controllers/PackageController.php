@@ -18,7 +18,7 @@ class PackageController extends Controller
 {
     /**
      * @OA\Get(
-     *      path="/api/v1/packages",
+     *      path="/packages",
      *      tags={"Packages"},
      *      summary="Obtener los paquetes",
      *      description="Regresa la informacion de los paquetes",
@@ -45,12 +45,17 @@ class PackageController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/v1/packages",
+     *     path="/packages",
      *     summary="Añadir un paquete",
      *     description="Añade la informacion perteneciente a un paquete",
      *      tags={"Packages"},
-     *     @OA\RequestBody(
+     *      @OA\RequestBody(
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
      *
+     *             )
+     *          )
      *     ),
      *     @OA\Response(
      *         response=201,
@@ -81,7 +86,13 @@ class PackageController extends Controller
         $series = $request->get('series');
 
         if($series == null || empty($series)){
-            abort(400);
+            return response()->json([
+                "errors" => [
+                    "code" => "ERROR-2",
+                    "title" => "Resource not found",
+                    "message" => "No se encontro un recurso"
+                ]
+            ], 404);
         }
 
         $allSeriesExist= true;
@@ -100,7 +111,13 @@ class PackageController extends Controller
                 $package->series()->attach($newSerie);
             }
         }else{
-            abort(404);
+            return response()->json([
+                "errors" => [
+                    "code" => "ERROR-2",
+                    "title" => "Resource not found",
+                    "message" => "No se encontro un recurso"
+                ]
+            ], 404);
         }
 
         return response()->json(new PackageResource($package), 201);
@@ -108,11 +125,19 @@ class PackageController extends Controller
 
     /**
      * @OA\Get(
-
-     *      path="/api/v1/packages/{packages}",
+     *      path="/packages/{packages}",
      *      tags={"Packages"},
      *      summary="Obtener un paquete",
      *      description="Regresa la informacion de un paquete",
+     *      @OA\Parameter(
+     *          name="packages",
+     *          description="Paquete id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *      @OA\Response(
      *          response=200,
      *          description="Operacion exitosa"
@@ -138,19 +163,39 @@ class PackageController extends Controller
     {
         $package = Package::with('series')->find($id);
         if(!$package){
-            abort(404);
+            return response()->json([
+                "errors" => [
+                    "code" => "ERROR-2",
+                    "title" => "Resource not found",
+                    "message" => "No se encontro un recurso"
+                ]
+            ], 404);
         }
         return response()->json(new PackageResource($package),200);
     }
 
     /**
      * @OA\Put(
-     *     path="/api/v1/packages/{packages}",
+     *     path="/packages/{packages}",
      *     tags={"Packages"},
      *     summary="Actualizar un paquete",
      *     description="Regresa la informacion de un paquete ya actualizada",
-     *     @OA\RequestBody(
+     *      @OA\Parameter(
+     *          name="packages",
+     *          description="Paquete id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\RequestBody(
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
      *
+     *             )
+     *         ),
      *     ),
      *     @OA\Response(
      *         response=404,
@@ -171,7 +216,13 @@ class PackageController extends Controller
     public function update(UpdatePackageRequest $request, $id){
         $package = Package::find($id);
         if(!$package){
-            abort(404);
+            return response()->json([
+                "errors" => [
+                    "code" => "ERROR-2",
+                    "title" => "Resource not found",
+                    "message" => "No se encontro un recurso"
+                ]
+            ], 404);
         }
         $package->update($request->all());
         return response()->json(new PackageResource($package), 200);
@@ -179,13 +230,27 @@ class PackageController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/v1/packages/{packages}/series",
+     *     path="/packages/{packages}/series",
      *     tags={"Packages"},
      *     summary="Actualizar las series que tiene un paquete",
      *     description="Regresa la información de un paquete,
      *      con sus series ya actualizadas, de manera que se añaden series al paquete",
+     *      @OA\Parameter(
+     *          name="packages",
+     *          description="Paquete id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *     @OA\RequestBody(
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
      *
+     *             )
+     *         )
      *     ),
      *     @OA\Response(
      *         response=404,
@@ -206,7 +271,13 @@ class PackageController extends Controller
     public function addSeries(Request $request, $id){
         $package = Package::with('series')->find($id);
         if(!$package){
-            abort(404);
+            return response()->json([
+                "errors" => [
+                    "code" => "ERROR-2",
+                    "title" => "Resource not found",
+                    "message" => "No se encontro un recurso"
+                ]
+            ], 404);
         }
 
         $series = $request->get('series');
@@ -219,8 +290,13 @@ class PackageController extends Controller
         }
 
         if(!$allSeriesExist){
-            abort(404);
-
+            return response()->json([
+                "errors" => [
+                    "code" => "ERROR-2",
+                    "title" => "Resource not found",
+                    "message" => "No se encontro un recurso"
+                ]
+            ], 404);
         }
 
         foreach($series as $serie){
@@ -234,11 +310,20 @@ class PackageController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/v1/packages/{packages}/series",
+     *     path="/packages/{packages}/series",
      *     summary="Actualizar las series que tiene un paquete",
      *     description="Regresa la información de un paquete,
      *      con sus series ya actualizadas, de manera que se eliminan series al paquete",
      *     tags={"Packages"},
+     *      @OA\Parameter(
+     *          name="packages",
+     *          description="Paquete id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *     @OA\Response(
      *         response=204,
      *         description="Serie destruida exitosamente"
@@ -255,11 +340,16 @@ class PackageController extends Controller
      *     },
      * )
      */
-
     public function removeSeries(Request $request, $id){
         $package = Package::with('series')->find($id);
         if(!$package){
-            abort(404);
+            return response()->json([
+                "errors" => [
+                    "code" => "ERROR-2",
+                    "title" => "Resource not found",
+                    "message" => "No se encontro un recurso"
+                ]
+            ], 404);
         }
 
         $series = $request->get('series');
@@ -278,19 +368,39 @@ class PackageController extends Controller
                 $package->series()->detach($newSerie);
             }
         }else{
-            abort(404);
+            return response()->json([
+                "errors" => [
+                    "code" => "ERROR-2",
+                    "title" => "Resource not found",
+                    "message" => "No se encontro un recurso"
+                ]
+            ], 404);
         }
         return response(null, 204);
     }
 
     /**
      * @OA\Get(
-     *      path=" api/v1/packages/{packages}/series",
+     *      path="/packages/{packages}/series",
      *      tags={"Packages"},
      *      summary="Obtener las series pertenecientes a un paquete",
      *      description="Regresa la informacion de las series pertenecientes a un paquete en particular",
-     *     @OA\RequestBody(
+     *      @OA\Parameter(
+     *          name="packages",
+     *          description="Paquete id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\RequestBody(
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
      *
+     *             )
+     *         ),
      *     ),
      *      @OA\Response(
      *          response=200,
@@ -315,17 +425,32 @@ class PackageController extends Controller
     public function getPackageSeries($id){
         $package = Package::with('series')->find($id);
         if(!$package){
-            abort(404);
+            return response()->json([
+                "errors" => [
+                    "code" => "ERROR-2",
+                    "title" => "Resource not found",
+                    "message" => "No se encontro un recurso"
+                ]
+            ], 404);
         }
         return response()->json(SerieResource::collection($package->series()->get()),200);
     }
 
     /**
      * @OA\Delete(
-     *     path=" api/v1/packages/{packages}",
+     *     path="/packages/{packages}",
      *     summary="Elimina un paquete",
      *     description="Elimina la información de un paquete",
      *     tags={"Packages"},
+     *      @OA\Parameter(
+     *          name="packages",
+     *          description="Paquete id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
      *     @OA\Response(
      *         response=204,
      *         description="Paquete destruido exitosamente"
@@ -345,7 +470,13 @@ class PackageController extends Controller
     public function destroy($id){
         $package = Package::find($id);
         if(!$package){
-            abort(404);
+            return response()->json([
+                "errors" => [
+                    "code" => "ERROR-2",
+                    "title" => "Resource not found",
+                    "message" => "No se encontro un recurso"
+                ]
+            ], 404);
         }
 
         $package->series()->detach();

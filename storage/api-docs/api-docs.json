@@ -6,14 +6,141 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8000"
+            "url": "http://localhost:8000/api/v1"
         },
         {
-            "url": "http://animeStore.test"
+            "url": "http://animeStore.test/api/v1"
         }
     ],
     "paths": {
-        "/api/v1/series/{series}/comments": {
+        "/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Iniciar sesion",
+                "operationId": "App\\Http\\Controllers\\AuthController::login",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "email": "john@email.com",
+                                    "password": "thiswillbeencrypted"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Logged in"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/signup": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Crea un nuevo usuario",
+                "operationId": "App\\Http\\Controllers\\AuthController::signup",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "name": "John",
+                                    "email": "john@email.com",
+                                    "password": "thiswillbeencrypted"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            }
+        },
+        "/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Obtener el usuario de la sesion actual",
+                "operationId": "App\\Http\\Controllers\\AuthController::me",
+                "responses": {
+                    "201": {
+                        "description": "Usuario actual"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Cerrar sesion",
+                "operationId": "App\\Http\\Controllers\\AuthController::logout",
+                "responses": {
+                    "200": {
+                        "description": "User logged out"
+                    }
+                }
+            }
+        },
+        "/refresh": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Refrescar token",
+                "operationId": "App\\Http\\Controllers\\AuthController::refresh",
+                "responses": {
+                    "200": {
+                        "description": "Token refrescado"
+                    }
+                }
+            }
+        },
+        "/series/{serie}/comments": {
             "get": {
                 "tags": [
                     "Comments"
@@ -21,6 +148,17 @@
                 "summary": "Obtener los comentarios pertenecientes a una serie ",
                 "description": "Regresa la informacion de todos los comentarios pertenecientes a una serie en particular",
                 "operationId": "App\\Http\\Controllers\\CommentController::index",
+                "parameters": [
+                    {
+                        "name": "serie",
+                        "in": "path",
+                        "description": "Serie id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Operacion exitosa"
@@ -40,9 +178,7 @@
                         ]
                     }
                 ]
-            }
-        },
-        "/api/v1/series/comments": {
+            },
             "post": {
                 "tags": [
                     "Comments"
@@ -50,7 +186,24 @@
                 "summary": "Añadir un comentario",
                 "description": "Añade la informacion perteneciente a un comentario en una serie en particular",
                 "operationId": "App\\Http\\Controllers\\CommentController::store",
-                "requestBody": {},
+                "parameters": [
+                    {
+                        "name": "serie",
+                        "in": "path",
+                        "description": "Serie id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
                 "responses": {
                     "201": {
                         "description": "OK"
@@ -72,7 +225,7 @@
                 ]
             }
         },
-        "/api/v1/orders": {
+        "/orders": {
             "get": {
                 "tags": [
                     "Orders"
@@ -99,18 +252,24 @@
             },
             "post": {
                 "tags": [
-                    "Packages"
+                    "Orders"
                 ],
-                "summary": "Añadir un paquete",
-                "description": "Añade la informacion perteneciente a un paquete",
+                "summary": "Crear una orden",
+                "description": "Añade la informacion perteneciente a una orden",
                 "operationId": "App\\Http\\Controllers\\OrderController::store",
-                "requestBody": {},
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
                 "responses": {
                     "201": {
                         "description": "OK"
                     },
                     "404": {
-                        "description": "El paquete no existe"
+                        "description": "El paquete, como order item, no existe"
                     },
                     "401": {
                         "description": "Unauthorized"
@@ -126,7 +285,7 @@
                 ]
             }
         },
-        "/api/v1/packages": {
+        "/packages": {
             "get": {
                 "tags": [
                     "Packages"
@@ -158,7 +317,13 @@
                 "summary": "Añadir un paquete",
                 "description": "Añade la informacion perteneciente a un paquete",
                 "operationId": "App\\Http\\Controllers\\PackageController::store",
-                "requestBody": {},
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
                 "responses": {
                     "201": {
                         "description": "OK"
@@ -183,7 +348,7 @@
                 ]
             }
         },
-        "/api/v1/packages/{packages}": {
+        "/packages/{packages}": {
             "get": {
                 "tags": [
                     "Packages"
@@ -191,6 +356,17 @@
                 "summary": "Obtener un paquete",
                 "description": "Regresa la informacion de un paquete",
                 "operationId": "App\\Http\\Controllers\\PackageController::show",
+                "parameters": [
+                    {
+                        "name": "packages",
+                        "in": "path",
+                        "description": "Paquete id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Operacion exitosa"
@@ -218,7 +394,24 @@
                 "summary": "Actualizar un paquete",
                 "description": "Regresa la informacion de un paquete ya actualizada",
                 "operationId": "App\\Http\\Controllers\\PackageController::update",
-                "requestBody": {},
+                "parameters": [
+                    {
+                        "name": "packages",
+                        "in": "path",
+                        "description": "Paquete id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
                 "responses": {
                     "404": {
                         "description": "Paquete a actualizar no encontrada"
@@ -238,9 +431,92 @@
                         ]
                     }
                 ]
+            },
+            "delete": {
+                "tags": [
+                    "Packages"
+                ],
+                "summary": "Elimina un paquete",
+                "description": "Elimina la información de un paquete",
+                "operationId": "App\\Http\\Controllers\\PackageController::destroy",
+                "parameters": [
+                    {
+                        "name": "packages",
+                        "in": "path",
+                        "description": "Paquete id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Paquete destruido exitosamente"
+                    },
+                    "404": {
+                        "description": "Paquete no encontrado"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
             }
         },
-        "/api/v1/packages/{packages}/series": {
+        "/packages/{packages}/series": {
+            "get": {
+                "tags": [
+                    "Packages"
+                ],
+                "summary": "Obtener las series pertenecientes a un paquete",
+                "description": "Regresa la informacion de las series pertenecientes a un paquete en particular",
+                "operationId": "App\\Http\\Controllers\\PackageController::getPackageSeries",
+                "parameters": [
+                    {
+                        "name": "packages",
+                        "in": "path",
+                        "description": "Paquete id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Operacion exitosa"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Paquete no encontrada en los registros"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            },
             "put": {
                 "tags": [
                     "Packages"
@@ -248,7 +524,24 @@
                 "summary": "Actualizar las series que tiene un paquete",
                 "description": "Regresa la información de un paquete,\n     *      con sus series ya actualizadas, de manera que se añaden series al paquete",
                 "operationId": "App\\Http\\Controllers\\PackageController::addSeries",
-                "requestBody": {},
+                "parameters": [
+                    {
+                        "name": "packages",
+                        "in": "path",
+                        "description": "Paquete id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
                 "responses": {
                     "404": {
                         "description": "Paquete a actualizar no encontrado o una o más series a añadir no encontradas"
@@ -276,6 +569,17 @@
                 "summary": "Actualizar las series que tiene un paquete",
                 "description": "Regresa la información de un paquete,\n     *      con sus series ya actualizadas, de manera que se eliminan series al paquete",
                 "operationId": "App\\Http\\Controllers\\PackageController::removeSeries",
+                "parameters": [
+                    {
+                        "name": "packages",
+                        "in": "path",
+                        "description": "Paquete id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "Serie destruida exitosamente"
@@ -297,66 +601,7 @@
                 ]
             }
         },
-        " api/v1/packages/{packages}/series": {
-            "get": {
-                "tags": [
-                    "Packages"
-                ],
-                "summary": "Obtener las series pertenecientes a un paquete",
-                "description": "Regresa la informacion de las series pertenecientes a un paquete en particular",
-                "operationId": "App\\Http\\Controllers\\PackageController::getPackageSeries",
-                "requestBody": {},
-                "responses": {
-                    "200": {
-                        "description": "Operacion exitosa"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "404": {
-                        "description": "Paquete no encontrada en los registros"
-                    }
-                },
-                "security": [
-                    {
-                        "Bearer Auth": [
-                            "write:projects",
-                            "read:projects"
-                        ]
-                    }
-                ]
-            }
-        },
-        " api/v1/packages/{packages}": {
-            "delete": {
-                "tags": [
-                    "Packages"
-                ],
-                "summary": "Elimina un paquete",
-                "description": "Elimina la información de un paquete",
-                "operationId": "App\\Http\\Controllers\\PackageController::destroy",
-                "responses": {
-                    "204": {
-                        "description": "Paquete destruido exitosamente"
-                    },
-                    "404": {
-                        "description": "Paquete no encontrado"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                },
-                "security": [
-                    {
-                        "Bearer Auth": [
-                            "write:projects",
-                            "read:projects"
-                        ]
-                    }
-                ]
-            }
-        },
-        "/api/v1/series": {
+        "/series": {
             "get": {
                 "tags": [
                     "Series"
@@ -388,7 +633,13 @@
                 "summary": "Añadir una serie",
                 "description": "Añade la informacion perteneciente a una serie",
                 "operationId": "App\\Http\\Controllers\\SerieController::store",
-                "requestBody": {},
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
                 "responses": {
                     "201": {
                         "description": "OK"
@@ -407,7 +658,7 @@
                 ]
             }
         },
-        "/api/v1/series/{series}": {
+        "/series/{series}": {
             "get": {
                 "tags": [
                     "Series"
@@ -415,6 +666,17 @@
                 "summary": "Obtener una serie",
                 "description": "Regresa la informacion de una serie",
                 "operationId": "getSerie",
+                "parameters": [
+                    {
+                        "name": "series",
+                        "in": "path",
+                        "description": "Serie id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Operacion exitosa"
@@ -442,7 +704,24 @@
                 "summary": "Actualizar una serie",
                 "description": "Regresa la informacion de una serie ya actualizada",
                 "operationId": "App\\Http\\Controllers\\SerieController::update",
-                "requestBody": {},
+                "parameters": [
+                    {
+                        "name": "series",
+                        "in": "path",
+                        "description": "Serie id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
                 "responses": {
                     "404": {
                         "description": "Serie a actualizar no encontrada"
@@ -462,9 +741,47 @@
                         ]
                     }
                 ]
+            },
+            "delete": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Elimina una serie",
+                "description": "Elimina la información de una serie",
+                "operationId": "App\\Http\\Controllers\\SerieController::destroy",
+                "parameters": [
+                    {
+                        "name": "series",
+                        "in": "path",
+                        "description": "Serie id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Serie destruida exitosamente"
+                    },
+                    "404": {
+                        "description": "Serie no encontrada"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
             }
         },
-        "/api/v1/series/{series}/packages": {
+        "/series/{series}/packages": {
             "get": {
                 "tags": [
                     "Series"
@@ -472,7 +789,24 @@
                 "summary": "Obtener los paquetes de series",
                 "description": "Regresa la informacion de los paquetes que tienen una serie en particular",
                 "operationId": "App\\Http\\Controllers\\SerieController::getPackages",
-                "requestBody": {},
+                "parameters": [
+                    {
+                        "name": "series",
+                        "in": "path",
+                        "description": "Serie id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Operacion exitosa"
@@ -494,20 +828,17 @@
                 ]
             }
         },
-        " api/v1/series/{series}": {
-            "delete": {
+        "/user/series": {
+            "get": {
                 "tags": [
                     "Series"
                 ],
-                "summary": "Elimina una serie",
-                "description": "Elimina la información de una serie",
-                "operationId": "App\\Http\\Controllers\\SerieController::destroy",
+                "summary": "Obtener mis series",
+                "description": "Regresa la informacion de las series que ya tengo",
+                "operationId": "mySeries",
                 "responses": {
-                    "204": {
-                        "description": "Serie destruida exitosamente"
-                    },
-                    "404": {
-                        "description": "Serie no encontrada"
+                    "200": {
+                        "description": "Operacion exitosa"
                     },
                     "401": {
                         "description": "Unauthorized"
