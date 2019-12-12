@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\OrderResource;
 use App\Order;
 use App\OrderItem;
 use App\Package;
@@ -20,7 +21,7 @@ class OrderController extends Controller
     {
         $myOrders = auth('api')->user()->orders()->with('orderItems.package')->get();
 
-        return response()->json($myOrders);
+        return response()->json(OrderResource::collection($myOrders));
     }
 
     /**
@@ -31,6 +32,7 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+
         $total = 0;
         $orderItems = $request->get("order_items");
         $order = new Order();
@@ -69,7 +71,6 @@ class OrderController extends Controller
         }
 
         $order->save();
-
         return response()->json($order);
     }
 

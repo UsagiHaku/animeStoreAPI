@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PackageResource;
+use App\Http\Resources\SerieResource;
 use App\Package;
 use App\Serie;
 use Illuminate\Http\Request;
@@ -16,7 +18,7 @@ class PackageController extends Controller
      */
     public function index()
     {
-        return response()->json(Package::with('series')->get());
+        return response()->json(PackageResource::collection(Package:: with('series')->get()));
     }
 
     /**
@@ -55,7 +57,7 @@ class PackageController extends Controller
             abort(404);
         }
 
-        return response()->json($package, 201);
+        return response()->json(new PackageResource($package), 201);
     }
 
     /**
@@ -70,7 +72,7 @@ class PackageController extends Controller
         if(!$package){
             abort(404);
         }
-        return response()->json($package);
+        return response()->json(new PackageResource($package),200);
     }
 
     /**
@@ -86,7 +88,7 @@ class PackageController extends Controller
             abort(404);
         }
         $package->update($request->all());
-        return response()->json($package, 200);
+        return response()->json(new PackageResource($package), 200);
     }
 
     public function addSeries(Request $request, $id){
@@ -115,7 +117,7 @@ class PackageController extends Controller
             $package->series()->attach($newSerie);
         }
 
-        return response()->json(Package::with('series')->find($id), 200);
+        return response()->json(new PackageResource(Package::with('series')->find($id)), 200);
     }
 
     public function removeSeries(Request $request, $id){
@@ -150,7 +152,7 @@ class PackageController extends Controller
         if(!$package){
             abort(404);
         }
-        return response()->json($package->series()->get(),200);
+        return response()->json(SerieResource::collection($package->series()->get()),200);
     }
 
     /**

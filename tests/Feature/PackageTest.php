@@ -2,13 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\OrderResource;
 use App\Package;
 use App\Serie;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 
-class PackageTest extends TestCase
+class PackageTest extends OrderResource
 {
     use RefreshDatabase;
 
@@ -72,7 +73,7 @@ class PackageTest extends TestCase
 
         $response
             ->assertStatus(200)
-            ->assertJsonCount(3, 'series');
+            ->assertJsonCount(3, 'data.series');
     }
 
     public function create_a_package_will_returns_the_created_package()
@@ -164,25 +165,17 @@ class PackageTest extends TestCase
         $response
             ->assertStatus(200)
             ->assertJsonStructure([
-                'id',
-                'title',
-                'description',
-                'image',
-                'price',
-                'series' => [
-                    [
+                'data' => [
+                    'id',
+                    'attributes' => [
+                        'title',
                         'description',
-                        'id',
                         'image',
-                        'name'
-                    ]
+                        'price',
+
+                    ],
+                    'series'
                 ]
-            ])
-            ->assertJsonFragment([
-                'description' => $newPackageSerie->description,
-                'id' => $newPackageSerie->id,
-                'image' => $newPackageSerie->image,
-                'name' => $newPackageSerie->name
             ]);
     }
 
@@ -236,14 +229,7 @@ class PackageTest extends TestCase
 
         $response
             ->assertStatus(200)
-            ->assertJsonStructure([
-                [
-                    'description',
-                    'id',
-                    'image',
-                    'name'
-                ]
-            ]);
+            ->assertJsonCount(3);
     }
 
 }

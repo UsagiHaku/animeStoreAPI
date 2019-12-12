@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PackageResource;
 use App\Http\Resources\SerieResource;
 use App\Serie;
 use Illuminate\Http\Request;
@@ -16,7 +17,8 @@ class SerieController extends Controller
      */
     public function index()
     {
-        return response()->json(Serie::with('packages', 'categories')->get());
+        //dd(Serie::with('packages','comments')->get());
+        return response()->json( SerieResource::collection(Serie::with('packages','comments')->get()));
     }
 
     /**
@@ -45,7 +47,7 @@ class SerieController extends Controller
         if (!$serie) {
             abort(404);
         }
-        return response()->json($serie);
+        return response()->json(new SerieResource($serie));
     }
 
     public function getPackages($id){
@@ -53,7 +55,7 @@ class SerieController extends Controller
         if(!$serie){
             abort(404);
         }
-        return response()->json($serie->packages()->get(),200);
+        return response()->json(PackageResource::collection($serie->packages()->get()),200);
     }
 
     /**
@@ -67,7 +69,7 @@ class SerieController extends Controller
     {
         $serie = Serie::find($id);
         $serie->update($request->all());
-        return response()->json($serie, 200);
+        return response()->json(new SerieResource($serie), 200);
     }
 
     /**
@@ -93,6 +95,6 @@ class SerieController extends Controller
     public function mySeries()
     {
         $mySeries = auth('api')->user()->series()->get();
-        return response()->json($mySeries, 200);
+        return response()->json(SerieResource::collection($mySeries), 200);
     }
 }

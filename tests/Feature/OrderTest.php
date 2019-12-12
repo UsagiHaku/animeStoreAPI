@@ -12,6 +12,8 @@ class OrderTest extends TestCase
 {
     public function test_create_order_with_all_valid_data()
     {
+        $this->withoutExceptionHandling();
+
         $packageOne = factory(Package::class)->create();
         $packageTwo = factory(Package::class)->create();
 
@@ -22,11 +24,13 @@ class OrderTest extends TestCase
             ]
         ], $this->authHeader($this->createSession()));
 
-        $response
-            ->assertStatus(200)
+        $response->assertStatus(200)
             ->assertJsonStructure([
+
                 'total',
                 'user'
+
+
             ])->assertJsonFragment([
                 'total' => $packageOne->price + $packageTwo->price
             ]);
