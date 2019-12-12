@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AddSeriesRequest;
+use App\Http\Requests\CreatePackageRequest;
+use App\Http\Requests\RemoveSeriesRequest;
+use App\Http\Requests\UpdatePackageRequest;
 use App\Http\Resources\PackageResource;
 use App\Http\Resources\SerieResource;
 use App\Package;
@@ -27,7 +31,7 @@ class PackageController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function store(Request $request)
+    public function store(CreatePackageRequest $request)
     {
         $package = new Package($request->all());
         $package->save();
@@ -115,7 +119,7 @@ class PackageController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update(Request $request, $id){
+    public function update(UpdatePackageRequest $request, $id){
         $package = Package::find($id);
         if(!$package){
             abort(404);
@@ -124,7 +128,7 @@ class PackageController extends Controller
         return response()->json(new PackageResource($package), 200);
     }
 
-    public function addSeries(Request $request, $id){
+    public function addSeries(AddSeriesRequest $request, $id){
         $package = Package::with('series')->find($id);
         if(!$package){
             abort(404);
@@ -153,7 +157,7 @@ class PackageController extends Controller
         return response()->json(new PackageResource(Package::with('series')->find($id)), 200);
     }
 
-    public function removeSeries(Request $request, $id){
+    public function removeSeries(RemoveSeriesRequest $request, $id){
         $package = Package::with('series')->find($id);
         if(!$package){
             abort(404);

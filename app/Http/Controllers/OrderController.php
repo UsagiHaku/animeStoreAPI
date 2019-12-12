@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateOrderRequest;
 use App\Http\Resources\OrderResource;
 use App\Order;
 use App\OrderItem;
@@ -30,7 +31,7 @@ class OrderController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function store(Request $request)
+    public function store(CreateOrderRequest $request)
     {
 
         $total = 0;
@@ -71,7 +72,7 @@ class OrderController extends Controller
         }
 
         $order->save();
-        return response()->json($order);
+        return new OrderResource($order);
     }
 
     /**

@@ -21,8 +21,7 @@ class UserResource extends JsonResource
                 'id' => $this->id,
                 'attributes' => [
                     'name' => $this->name,
-                    'email' => $this->email,
-                    'api_token' => $this->api_token
+                    'email' => $this->email
                 ],
                 'series'=> SerieResource::collection($this->series),
                 'comments'=> CommentResource::collection($this->comments),
@@ -30,7 +29,6 @@ class UserResource extends JsonResource
                 'links' => [
                     'self' => url("/me")
                 ]
-
             ]
         ];
     }

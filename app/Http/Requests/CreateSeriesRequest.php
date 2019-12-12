@@ -6,8 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-
-class CreatePackageRequest extends FormRequest
+class CreateSeriesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,12 +26,9 @@ class CreatePackageRequest extends FormRequest
     public function rules()
     {
         return [
-            "title" => ['required', 'string', 'max:255'],
-            "description" => ['required', 'string', 'max:255'],
-            "image" => ['required', 'string','URL', 'max:255'],
-            "price" => ['required', 'numeric','gt:0'],
-            "series" => ['required','array','min:1'],
-            "series.*.id" => ['required','integer','distinct']
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'max:255'],
+            'image' => ['required', 'string','URL', 'max:255']
         ];
     }
 

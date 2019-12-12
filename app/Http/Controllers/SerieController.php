@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateSeriesRequest;
+use App\Http\Requests\UpdateSeriesRequest;
 use App\Http\Resources\PackageResource;
 use App\Http\Resources\SerieResource;
 use App\Serie;
@@ -27,7 +29,7 @@ class SerieController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function store(Request $request)
+    public function store(CreateSeriesRequest $request)
     {
         $serie = Serie::create($request->all());
 
@@ -65,7 +67,7 @@ class SerieController extends Controller
      * @param int $id
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateSeriesRequest $request, $id)
     {
         $serie = Serie::find($id);
         $serie->update($request->all());
