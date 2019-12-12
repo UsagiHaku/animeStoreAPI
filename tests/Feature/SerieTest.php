@@ -21,6 +21,8 @@ class SerieTest extends TestCase
      */
     public function test_list_series()
     {
+        $this->withoutExceptionHandling();
+
         factory(Serie::class, 3)->create();
 
         $response = $this->get('api/v1/series',
@@ -29,7 +31,8 @@ class SerieTest extends TestCase
 
         $response
             ->assertStatus(200)
-            ->assertJsonCount(3);
+            ->assertJsonCount(3)
+        ;
     }
 
     public function test_show_one_serie()
@@ -74,7 +77,8 @@ class SerieTest extends TestCase
 
         $response
             ->assertStatus(200)
-            ->assertJsonCount(3, 'packages');
+            ->assertJsonCount(3,"data.packages");
+        ;
     }
 
 
@@ -111,7 +115,7 @@ class SerieTest extends TestCase
                 'name' => 'El señor de los anillos',
                 'description' => 'La mejor saga fantastica',
             ])
-            ->assertJsonCount(6);
+            ->assertJsonCount(3,"data.attributes");
     }
 
     public function test_delete_a_serie_will_returns_empty_response()
@@ -139,33 +143,6 @@ class SerieTest extends TestCase
         $this->assertDatabaseMissing("series", ["id" => $serie->id]);
     }
 
-    public function test_get_all_packages_with_one_particular_serie(){
-        $this->withoutExceptionHandling();
-        $serie = factory(Serie::class)->create();
-
-        factory(Package::class, 3)
-            ->create()
-            ->each(function ($package) {
-                $package->series()->attach(Serie::all()->first());
-            });
-
-        $response = $this->get('/api/v1/series/'. $serie->id .'/packages',
-            $this->authHeader($this->createSession())
-        );
-
-        $response
-            ->assertStatus(200)
-            ->assertJsonStructure([
-                [
-                    'description',
-                    'id',
-                    'image',
-                    'title'
-                ]
-            ]);
-    }
-
-
     public function test_list_my_series()
     {
         $loginResponse = $this->createSession();
@@ -183,4 +160,25 @@ class SerieTest extends TestCase
             ->assertStatus(200)
             ->assertJsonCount(4);
     }
+
+    public function test_get_all_packages_with_one_particular_serie(){
+        $this->withoutExceptionHandling();
+        $serie = factory(Serie::class)->create();
+
+        factory(Package::class, 3)
+            ->create()
+            ->each(function ($package) {
+                $package->series()->attach(Serie::all()->first());
+            });
+
+        $response = $this->get('/api/v1/series/'. $serie->id .'/packages',
+            $this->authHeader($this->createSession())
+        );
+
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(3);
+    }
+
+
 }

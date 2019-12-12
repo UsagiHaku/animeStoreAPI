@@ -3,8 +3,6 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\User;
-use App\Serie;
 
 class CommentResource extends JsonResource
 {
@@ -16,23 +14,44 @@ class CommentResource extends JsonResource
      */
     public function toArray($request)
     {
-        $serie_id = $this->serie_id;
-        $serie = Serie::findOrFail($serie_id);
-        $serie_name = $serie->name;
-
-        $user_id = $this->user_id;
-        $user = User::findOrFail($user_id);
-        $user_name = $user->name;
-
-        return [
+        $data = [
             'data' => [
                 'type' => 'Comments',
+                'id' => $this->id,
                 'attributes' => [
                     'description' => $this->description,
-                    'serie' => $serie_name,
-                    'made by' => $user_name
+                    'user'=>$this->user_id,
+                    'serie'=>$this->serie_id
+                ],
+                'links' => [
+                    'self' => url("/comments/{$this->id}")
                 ]
             ]
         ];
+
+        return $data;
     }
+
+    // public function toArray($request)
+    //    {
+    //        $serie_id = $this->serie_id;
+    //        $serie = Serie::findOrFail($serie_id);
+    //        $serie_name = $serie->name;
+    //
+    //        $user_id = $this->user_id;
+    //        $user = User::findOrFail($user_id);
+    //        $user_name = $user->name;
+    //
+    //        return [
+    //            'data' => [
+    //                'type' => 'Comments',
+    //                'attributes' => [
+    //                    'description' => $this->description,
+    //                    'serie' => $serie_name,
+    //                    'made by' => $user_name
+    //                ]
+    //            ]
+    //        ];
+    //    }
+
 }

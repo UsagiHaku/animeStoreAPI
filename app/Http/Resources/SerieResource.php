@@ -17,6 +17,10 @@ class SerieResource extends JsonResource
      */
     public function toArray($request)
     {
+        $packages_id = [];
+        foreach ($this->packages as $package){
+            array_push($packages_id,$package->id);
+        }
         $data = [
             'data' => [
                 'type' => 'Series',
@@ -26,6 +30,8 @@ class SerieResource extends JsonResource
                     'description' => $this->description,
                     'image' => $this->image
                 ],
+                'packages'=> $packages_id,
+                //'comments'=> CommentResource::collection($this->comments),
                 'links' => [
                     'self' => url("/series/{$this->id}")
                 ]

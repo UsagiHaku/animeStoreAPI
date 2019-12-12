@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,6 +29,8 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('series/{id}/packages', 'SerieController@getPackages');
         Route::get('/user/series', 'SerieController@mySeries');
         Route::apiResource('series/comments','CommentController');
+
+        Route::get('series/{id}/packages', 'SerieController@getPackages');
         Route::post('logout', 'AuthController@logout');
         Route::post('refresh', 'AuthController@refresh');
         Route::get('me', 'AuthController@me');

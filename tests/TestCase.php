@@ -33,8 +33,8 @@ abstract class TestCase extends BaseTestCase
         $response = $this->get('/api/v1/me',
             $this->authHeader($response)
         );
-
-        return User::find($response->json('data.attributes.id'));
+        //dd($response->json());
+        return User::find($response->json('data.id'));
     }
 
     protected function authHeader(TestResponse $response): array {

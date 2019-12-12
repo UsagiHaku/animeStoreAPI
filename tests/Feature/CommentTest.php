@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Comment;
 use App\Serie;
 use App\User;
-use Faker\Factory;
+
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -16,6 +16,7 @@ class CommentTest extends TestCase
     public function test_list_comments_of_one_serie()
     {
        $serieWithComments = factory(Serie::class)->create();
+
        $user = factory(User::class)->create();
        $serieWithComments->users()->attach($user);
 
@@ -30,10 +31,10 @@ class CommentTest extends TestCase
            $this->authHeader($this->createSession())
        );
 
+
         $response->assertStatus(200)
             ->assertJsonCount(1);
     }
-
     public function test_create_a_comment_of_one_serie_will_returns_the_comment()
     {
         $this->withoutExceptionHandling();
@@ -53,6 +54,7 @@ class CommentTest extends TestCase
                 'description' => 'La mejor saga fantastica'
             ]);
     }
+
 
 
 }

@@ -7,7 +7,6 @@ use App\Http\Resources\ListCommentResource;
 use App\Serie;
 use Illuminate\Http\Request;
 
-
 class CommentController extends Controller
 {
     /**
