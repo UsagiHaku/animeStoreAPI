@@ -13,9 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->post('v1/series/{id}/comments','CommentController@store');
-Route::middleware('auth:api')->get('v1/series/{id}/comments','CommentController@list');
-
 Route::group(['prefix' => 'v1'], function () {
     Route::group(['middleware' => 'jwt.auth'], function () {
         Route::apiResource('series', 'SerieController');

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Comment;
+use App\Http\Requests\CreateCommentRequest;
+use App\Http\Resources\CommentResource;
 use App\Http\Resources\ListCommentResource;
 use App\Serie;
 use Illuminate\Http\Request;
@@ -29,7 +31,7 @@ class CommentController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \App\Http\Resources\CommentResource
      */
-    public function store($id, Request $request)
+    public function store($id, CreateCommentRequest $request)
     {
         $serie = Serie::with('comments')->find($id);
         if(!$serie){
@@ -39,8 +41,8 @@ class CommentController extends Controller
         $comment = new Comment($request->all());
         $comment->user()->associate(auth('api')->user());
         $serie->comments()->save($comment);
-
-        return response()->json($comment, 201);
+        return new CommentResource($comment);
+        //return response()->json($comment, 201);
     }
 
     // $token = $request->bearerToken();
