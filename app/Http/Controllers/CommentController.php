@@ -8,13 +8,36 @@ use App\Http\Resources\CommentResource;
 use App\Http\Resources\ListCommentResource;
 use App\Serie;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class CommentController extends Controller
 {
     /**
+     * @OA\Get(
+     *      path="/api/v1/series/{series}/comments",
+     *      tags={"Comments"},
+     *      summary="Obtener los comentarios pertenecientes a una serie ",
+     *      description="Regresa la informacion de todos los comentarios pertenecientes a una serie en particular",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Operacion exitosa"
+     *       ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Una o más series pertenecientes al paquete
+     *          no se encuentran o el paquete mismo no se encuentra"
+     *     ),
+     *      @OA\Response(response=401, description="Unauthorized"),
+     *      security={
+     *         {
+     *             "Bearer Auth": {"write:projects", "read:projects"}
+     *         }
+     *     },
+     * )
+     *
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index($id)
     {
@@ -26,10 +49,29 @@ class CommentController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/v1/series/comments",
+     *     summary="Añadir un comentario",
+     *     description="Añade la informacion perteneciente a un comentario en una serie en particular",
+     *      tags={"Comments"},
+     *     @OA\RequestBody(
      *
-     * @param  \Illuminate\Http\Request $request
-     * @return \App\Http\Resources\CommentResource
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="OK"
+     *     ),
+     *      @OA\Response(
+     *         response=404,
+     *         description="La serie no se encuentra"
+     *     ),
+     *      @OA\Response(response=401, description="Unauthorized"),
+     *      security={
+     *         {
+     *             "Bearer Auth": {"write:projects", "read:projects"}
+     *         }
+     *     },
+     * )
      */
     public function store($id, CreateCommentRequest $request)
     {
@@ -45,64 +87,6 @@ class CommentController extends Controller
         //return response()->json($comment, 201);
     }
 
-    // $token = $request->bearerToken();
-    //
-    //        $id_serie = $request->route('id');
-    //
-    //        $user = DB::table('users')->where('api_token', '=', $token)->first();
-    //
-    //        $serie_user_exists = DB::table('serie_user')
-    //            ->where([
-    //                ['serie_id', '=', $id_serie],
-    //                ['user_id', '=', $user->id]
-    //            ])
-    //            ->exists();
-    //
-    //        if ($serie_user_exists) {
-    //            $comment_id = DB::table('comments')->insertGetId([
-    //                'description' => $request->get('description'),
-    //                'user_id' => $user->id,
-    //                'serie_id' => $id_serie
-    //            ]);
-    //
-    //            $comment = Comment::findOrFail($comment_id);
-    //
-    //            return new CommentResource($comment);
-    //
-    //        } else {
-    //            return response()->json([
-    //                "errors" => [
-    //                    "code" => "ERROR-5",
-    //                    "title" => "Serie Not Purchased",
-    //                    "message" => "No posee esta serie en su inventario"
-    //                ]
-    //            ], 401);
-    //        }
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return \App\Http\Resources\CommentResource
-     */
-    public function show($id)
-    {
-
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
-     */
-    public function list($id)
-    {
-        $comments = Comment::where('serie_id', $id)->get();
-
-        $comment = ListCommentResource::collection($comments);
-        return $comment;
-    }
-
     /**
      * Update the specified resource in storage.
      *
@@ -115,14 +99,4 @@ class CommentController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

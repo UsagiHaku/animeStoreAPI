@@ -13,6 +13,349 @@
         }
     ],
     "paths": {
+        "/api/v1/series/{series}/comments": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Obtener los comentarios pertenecientes a una serie ",
+                "description": "Regresa la informacion de todos los comentarios pertenecientes a una serie en particular",
+                "operationId": "App\\Http\\Controllers\\CommentController::index",
+                "responses": {
+                    "200": {
+                        "description": "Operacion exitosa"
+                    },
+                    "404": {
+                        "description": "Una o más series pertenecientes al paquete\n     *          no se encuentran o el paquete mismo no se encuentra"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/api/v1/series/comments": {
+            "post": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Añadir un comentario",
+                "description": "Añade la informacion perteneciente a un comentario en una serie en particular",
+                "operationId": "App\\Http\\Controllers\\CommentController::store",
+                "requestBody": {},
+                "responses": {
+                    "201": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "La serie no se encuentra"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/api/v1/orders": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Obtener todas las órdenes",
+                "description": "Regresa la información perteneciente a\n     *      todas las órdenes hechas por un usuario en particular",
+                "operationId": "App\\Http\\Controllers\\OrderController::index",
+                "responses": {
+                    "200": {
+                        "description": "Operacion exitosa"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Packages"
+                ],
+                "summary": "Añadir un paquete",
+                "description": "Añade la informacion perteneciente a un paquete",
+                "operationId": "App\\Http\\Controllers\\OrderController::store",
+                "requestBody": {},
+                "responses": {
+                    "201": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "El paquete no existe"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/api/v1/packages": {
+            "get": {
+                "tags": [
+                    "Packages"
+                ],
+                "summary": "Obtener los paquetes",
+                "description": "Regresa la informacion de los paquetes",
+                "operationId": "App\\Http\\Controllers\\PackageController::index",
+                "responses": {
+                    "200": {
+                        "description": "Operacion exitosa"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Packages"
+                ],
+                "summary": "Añadir un paquete",
+                "description": "Añade la informacion perteneciente a un paquete",
+                "operationId": "App\\Http\\Controllers\\PackageController::store",
+                "requestBody": {},
+                "responses": {
+                    "201": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "Una o más series pertenecientes al paquete\n     *          no se encuentran o el paquete mismo no se encuentra"
+                    },
+                    "400": {
+                        "description": "No hay series en el paquete"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/api/v1/packages/{packages}": {
+            "get": {
+                "tags": [
+                    "Packages"
+                ],
+                "summary": "Obtener un paquete",
+                "description": "Regresa la informacion de un paquete",
+                "operationId": "App\\Http\\Controllers\\PackageController::show",
+                "responses": {
+                    "200": {
+                        "description": "Operacion exitosa"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Serie no encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Packages"
+                ],
+                "summary": "Actualizar un paquete",
+                "description": "Regresa la informacion de un paquete ya actualizada",
+                "operationId": "App\\Http\\Controllers\\PackageController::update",
+                "requestBody": {},
+                "responses": {
+                    "404": {
+                        "description": "Paquete a actualizar no encontrada"
+                    },
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/api/v1/packages/{packages}/series": {
+            "put": {
+                "tags": [
+                    "Packages"
+                ],
+                "summary": "Actualizar las series que tiene un paquete",
+                "description": "Regresa la información de un paquete,\n     *      con sus series ya actualizadas, de manera que se añaden series al paquete",
+                "operationId": "App\\Http\\Controllers\\PackageController::addSeries",
+                "requestBody": {},
+                "responses": {
+                    "404": {
+                        "description": "Paquete a actualizar no encontrado o una o más series a añadir no encontradas"
+                    },
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Packages"
+                ],
+                "summary": "Actualizar las series que tiene un paquete",
+                "description": "Regresa la información de un paquete,\n     *      con sus series ya actualizadas, de manera que se eliminan series al paquete",
+                "operationId": "App\\Http\\Controllers\\PackageController::removeSeries",
+                "responses": {
+                    "204": {
+                        "description": "Serie destruida exitosamente"
+                    },
+                    "404": {
+                        "description": "Una o más series no encontradas o paquete no encontrado"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            }
+        },
+        " api/v1/packages/{packages}/series": {
+            "get": {
+                "tags": [
+                    "Packages"
+                ],
+                "summary": "Obtener las series pertenecientes a un paquete",
+                "description": "Regresa la informacion de las series pertenecientes a un paquete en particular",
+                "operationId": "App\\Http\\Controllers\\PackageController::getPackageSeries",
+                "requestBody": {},
+                "responses": {
+                    "200": {
+                        "description": "Operacion exitosa"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Paquete no encontrada en los registros"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            }
+        },
+        " api/v1/packages/{packages}": {
+            "delete": {
+                "tags": [
+                    "Packages"
+                ],
+                "summary": "Elimina un paquete",
+                "description": "Elimina la información de un paquete",
+                "operationId": "App\\Http\\Controllers\\PackageController::destroy",
+                "responses": {
+                    "204": {
+                        "description": "Paquete destruido exitosamente"
+                    },
+                    "404": {
+                        "description": "Paquete no encontrado"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            }
+        },
         "/api/v1/series": {
             "get": {
                 "tags": [
@@ -24,6 +367,147 @@
                 "responses": {
                     "200": {
                         "description": "Operacion exitosa"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Añadir una serie",
+                "description": "Añade la informacion perteneciente a una serie",
+                "operationId": "App\\Http\\Controllers\\SerieController::store",
+                "requestBody": {},
+                "responses": {
+                    "201": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/api/v1/series/{series}": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Obtener una serie",
+                "description": "Regresa la informacion de una serie",
+                "operationId": "getSerie",
+                "responses": {
+                    "200": {
+                        "description": "Operacion exitosa"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Serie no encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Actualizar una serie",
+                "description": "Regresa la informacion de una serie ya actualizada",
+                "operationId": "App\\Http\\Controllers\\SerieController::update",
+                "requestBody": {},
+                "responses": {
+                    "404": {
+                        "description": "Serie a actualizar no encontrada"
+                    },
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/api/v1/series/{series}/packages": {
+            "get": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Obtener los paquetes de series",
+                "description": "Regresa la informacion de los paquetes que tienen una serie en particular",
+                "operationId": "App\\Http\\Controllers\\SerieController::getPackages",
+                "requestBody": {},
+                "responses": {
+                    "200": {
+                        "description": "Operacion exitosa"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Serie no encontrada en los registros"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer Auth": [
+                            "write:projects",
+                            "read:projects"
+                        ]
+                    }
+                ]
+            }
+        },
+        " api/v1/series/{series}": {
+            "delete": {
+                "tags": [
+                    "Series"
+                ],
+                "summary": "Elimina una serie",
+                "description": "Elimina la información de una serie",
+                "operationId": "App\\Http\\Controllers\\SerieController::destroy",
+                "responses": {
+                    "204": {
+                        "description": "Serie destruida exitosamente"
+                    },
+                    "404": {
+                        "description": "Serie no encontrada"
                     },
                     "401": {
                         "description": "Unauthorized"
