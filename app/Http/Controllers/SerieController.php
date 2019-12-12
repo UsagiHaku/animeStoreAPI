@@ -10,16 +10,48 @@ use App\Serie;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+/**
+ * @OA\Info(title="API Series", version="1.0")
+ *
+ * @OA\SecurityScheme(
+ *     type="http",
+ *     description="Add bearer token to endpoints",
+ *     name="Bearer Token",
+ *     in="header",
+ *     scheme="bearer",
+ *     securityScheme="Bearer Auth",
+ * )
+ *
+ * @OA\Server(url="http://localhost:8000")
+ * @OA\Server(url="http://animeStore.test")
+ */
 class SerieController extends Controller
 {
     /**
+     * @OA\Get(
+     *      path="/api/v1/series",
+     *      operationId="getSeries",
+     *      tags={"Series"},
+     *      summary="Obtener las series",
+     *      description="Regresa la informacion de las series",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Operacion exitosa"
+     *       ),
+     *      @OA\Response(response=401, description="Unauthorized"),
+     *      security={
+     *         {
+     *             "Bearer Auth": {"write:projects", "read:projects"}
+     *         }
+     *     },
+     * )
+     *
      * Display a listing of the resource.
      *
      * @return Response
      */
     public function index()
     {
-        //dd(Serie::with('packages','comments')->get());
         return response()->json( SerieResource::collection(Serie::with('packages','comments')->get()));
     }
 
