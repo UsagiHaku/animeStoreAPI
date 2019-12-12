@@ -59,6 +59,39 @@ class PackageController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="api/v1/login",
+     *     summary="Log in",
+     *     @OA\RequestBody(
+     *     required=true,
+     *     @OA\MediaType(
+     *     mediaType="application/json",
+     *     @OA\Schema(
+     *     @OA\Property(
+     *     property="email",
+     *     type="string"
+     * ),
+     *     @OA\Property(
+     *     property="password",
+     *     type="string"
+     * ),
+     *     example={"email": "john@email.com", "password": "thiswillbeencrypted"}
+     *     ),
+     *     ),
+     *     ),
+     *     @OA\Response(
+     *     response=200,
+     *     description="Logged in"
+     * ),
+     *     @OA\Response(
+     *     response=401,
+     *     description="Unauthorized"
+     * )
+     * )
+     *
+     */
+
+    /**
      * Display the specified resource.
      *
      * @param  int  $id
